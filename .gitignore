@@ -86,3 +86,5 @@ venv/
     
     # Spyder project settings
     .spyderproject
+    
+__pycache__
