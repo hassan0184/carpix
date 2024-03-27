@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from .models import User
+from users.models import User
 from .utils import generate_random_password
 from django.core.mail import send_mail
-
+from users.forms.signup_form import UserSignupForm
 
 def custom_logout_view(request):
     logout(request)
@@ -45,3 +45,22 @@ def forget_password_view(request):
             return render(request, 'forget_password.html', {'error': 'User with this email does not exist'})
     else:
       return render(request, "forget_password.html")
+    
+
+def user_signup_view(request):
+    if request.method == 'POST':
+        form = UserSignupForm(request.POST)
+        if form.is_valid():
+            print("in if")
+            user = User.objects.create_superuser(
+                email=form.cleaned_data.get("email"),
+                username=form.cleaned_data.get("username"),
+                password=form.cleaned_data.get("password")
+            )
+            print("created user", user)
+            return redirect('login')
+    else:
+        print("in else")
+        form = UserSignupForm()
+    print("here", form.errors)
+    return render(request, 'user_signup.html', {'form': form})

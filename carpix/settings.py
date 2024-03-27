@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'carpix.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'carpix',
         'USER': 'postgres',
         'PASSWORD': 'password',
