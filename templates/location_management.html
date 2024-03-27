@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Management</title>
+    <style>
+        /* Add your custom styles here */
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #4BA3E2; /* Use your bg-sky-700 color here */
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        /* Delete button styles */
+        .delete-btn {
+            background-color: #f44336; /* Use your delete button color here */
+            color: white;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Location Management</h1>
+
+    <!-- Table to display existing locations -->
+    <h2>View Locations</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Location Name</th>
+                <th>Number of Booths</th>
+                <th>Number of Cameras</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for location in locations %}
+            <tr>
+                <td>{{ location.name }}</td>
+                <td>{{ location.booth_set.count }}</td>
+                <td>{{ location.camera_set.count }}</td>
+                <td><button class="delete-btn" onclick="deleteLocation('{{ location.id }}')">Delete</button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        function deleteLocation(locationId) {
+            // Here you can implement JavaScript logic to delete the location
+            // You may use AJAX to send a request to your backend to delete the location
+            // After successful deletion, you may refresh the page or update the UI accordingly
+            alert("Delete location with ID: " + locationId);
+        }
+    </script>
+</body>
+</html>

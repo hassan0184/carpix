@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'users',
-    'dashboard'
+    'dashboard',
+    'location',
 ]
 
 MIDDLEWARE = [
