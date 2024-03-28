@@ -53,3 +53,22 @@ class User(AbstractUser):
 
     def get_role(self):
         return self.get_role_display()
+    
+
+from django.utils import timezone
+
+class Profile(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    middle_name = models.CharField(max_length=100, blank=True, null=True)
+    phone = models.CharField(max_length=30, blank=True, null=True)
+    email = models.CharField(max_length=150)
+    birthday = models.DateField(blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True, default=timezone.now)
+    updated_at = models.DateTimeField(blank=True, null=True, default=timezone.now)
+    status = models.CharField(max_length=50, blank=True, null=True)
+    address= models.CharField(max_length=150, blank=True, null=True)
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+    )
