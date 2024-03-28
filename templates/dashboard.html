@@ -1,0 +1,72 @@
+{% include 'base.html' %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card rounded-lg border-primary">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">Total Vehicle Count</h5>
+                    <p class="card-text">Display the total number of vehicles captured in the system, segmented by status.</p>
+                    <div class="text-center mt-3">
+                        <h2 class="display-4 text-primary">1,235</h2>
+                        <p class="text-muted">Active: 987 | Archived: 248</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="card rounded-lg border-success">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Location Metrics</h5>
+                    <p class="card-text">Insights into the distribution of vehicles across different geographic locations.</p>
+                    <div id="map" style="height: 200px;"></div> <!-- Placeholder for map -->
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="card rounded-lg border-info">
+                <div class="card-body">
+                    <h5 class="card-title text-info">Monthly Vehicle Additions</h5>
+                    <p class="card-text">Trends in vehicle additions over time.</p>
+                    <div class="text-center mt-3">
+                        <canvas id="monthlyAdditionsChart" style="height: 200px;"></canvas> <!-- Placeholder for chart -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- System Performance Metrics -->
+        <div class="col-lg-6 mb-4">
+            <div class="card rounded-lg border-danger">
+                <div class="card-body">
+                    <h5 class="card-title text-danger">System Performance Metrics</h5>
+                    <p class="card-text">Display performance indicators such as uptime, response times, and system health.</p>
+                    <!-- Your implementation for system performance metrics goes here -->
+                    <div class="text-center mt-3">
+                        <canvas id="performanceMetricsChart" style="height: 200px;"></canvas> <!-- Placeholder for chart -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rental Activity Insights -->
+        <div class="col-lg-6 mb-4">
+            <div class="card rounded-lg border-warning">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">Rental Activity Insights</h5>
+                    <p class="card-text">Analytics on rental activity, including frequency of vehicle usage, average rental durations, and revenue generated.</p>
+                    <!-- Your implementation for rental activity insights goes here -->
+                    <div class="text-center mt-3">
+                        <canvas id="rentalActivityChart" style="height: 200px;"></canvas> <!-- Placeholder for chart -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
