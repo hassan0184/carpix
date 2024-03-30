@@ -11,7 +11,6 @@ class UserSignupForm(forms.ModelForm):
 
     def clean(self):
         if User.objects.filter(username=self.cleaned_data.get("username")).exists():
-            print("in firt if")
             raise forms.ValidationError("User with the same username already exists")
         if User.objects.filter(email=self.cleaned_data.get("email")).exists():
             raise forms.ValidationError("User with the same email already exists")

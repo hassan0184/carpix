@@ -120,3 +120,37 @@ def change_password_view(request):
     else:
         form = UserSignupForm()
     return render(request, 'change_password.html', {'form': form})
+
+@login_required
+def user_management_view(request):
+    if request.method == 'POST':
+        form = UserSignupForm(request.POST)    
+        if form.is_valid():
+            if request.POST.get("user_type").lower()=="simple_user":
+                user = User.objects.create_user(
+                    email=form.cleaned_data.get("email"),
+                    username=form.cleaned_data.get("username"),
+                    password=form.cleaned_data.get("password")
+                )
+            else:
+                user = User.objects.create_manager_user(
+                    email=form.cleaned_data.get("email"),
+                    username=form.cleaned_data.get("username"),
+                    password=form.cleaned_data.get("password")
+                )
+
+            profile = Profile.objects.create(
+                first_name=form.cleaned_data.get("first_name", None),
+                last_name=form.cleaned_data.get("last_name",None),
+                email=form.cleaned_data.get("email"),
+                user=user
+            )
+            messages.success(request, "User created successfully")
+            return render(request, "all_users.html", {"users":User.objects.all().exclude(role=1)})
+    else:
+        form = UserSignupForm()
+    return render(request, 'user_management.html', {'form': form})
+
+
+def all_users_view(request):
+    return render(request, "all_users.html", {"users":User.objects.all().exclude(role=1)})

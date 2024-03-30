@@ -3,11 +3,11 @@
 <h2 class="ld:text-5xl md:text-3xl text-xl text-center">Login</h2>
 {% if messages %}
 <div class="messages">
-    {% for message in messages %}
-    <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %}" role="alert">
-        {{ message }}
-    </div>
-    {% endfor %}
+{% for message in messages %}
+<div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %}" role="alert">
+	{{ message }}
+</div>
+{% endfor %}
 </div>
 {% endif %} 
 <form action={% url 'login' %} method="POST">

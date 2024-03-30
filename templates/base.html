@@ -29,9 +29,12 @@
         <li class="nav-item active">
           <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Create User/Manager</a>
+        {% if request.user.is_authenticated and request.user.is_staff %}
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'usermanagement' %}">User Management <span class="sr-only">(current)</span></a>
         </li>
+        {% else %}
+        {% endif %}
         {% if request.user.is_authenticated and request.user.is_staff %}
         <li class="nav-item">
           <a class="nav-link" href="{% url 'home' %}">Booth</a>
@@ -45,6 +48,10 @@
               Profile Management
             </button>
             <div class="dropdown-menu">
+              {% if request.user.is_authenticated and request.user.is_staff %}
+              <a class="dropdown-item" href="{%url 'allusers' %}">All Users</a>
+              {% else %}
+              {% endif %}
               <a class="dropdown-item" href="{%url 'myprofile' %}">My Profile</a>
               <a class="dropdown-item" href="{% url 'editprofile' %}">Edit Profile</a>
               <a class="dropdown-item" href="{% url 'change-password' %}">Change Password</a>
