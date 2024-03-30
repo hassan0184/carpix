@@ -1,3 +1,4 @@
+{% include 'base.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,25 +75,21 @@
 
 <body>
     <center>
-{% if messages %}
-	{% for i in messages %}
-	<script> swal("{{ i }}")
-
-	</script>
-	
-	{% endfor %}
-
-{% endif %}
-</center>  
+    {% if messages %}
+        {% for i in messages %}
+        <script> swal("{{ i }}") </script>
+        {% endfor %}
+    {% endif %}
+    </center>  
 
     <div class="sidebar">
         <ul>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addLocation" data-whatever="@mdo">Add Location</button>
-            <li><a href="{% url 'location_management' %}" target="_blank">View Locations</a></li>
+            <li><a href="{% url 'location_management' %}" >View Locations</a></li>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addBooth" data-whatever="@mdo">Add Booth</button>
-            <li><a href="{% url 'booth_management' %}" target="_blank">View Booths</a></li>
+            <li><a href="{% url 'booth_management' %}">View Booths</a></li>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCamera" data-whatever="@mdo">Add Camera</button>
-            <li><a href="{% url 'camera_management' %}" target="_blank">View Cameras</a></li>
+            <li><a href="{% url 'camera_management' %}">View Cameras</a></li>
         </ul>
     </div>
     <div class="content">

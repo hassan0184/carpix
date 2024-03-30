@@ -1,42 +1,36 @@
 {% load static %}
 {% include 'header_login.html' %}
 <h2 class="ld:text-5xl md:text-3xl text-xl text-center">Login</h2>
-<center>
 {% if messages %}
-	{% for i in messages %}
-	<script> swal("{{ i }}")
-
-	</script>
-	
-	{% endfor %}
-
-{% endif %}
-</center>                    
+<div class="messages">
+    {% for message in messages %}
+    <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %}" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %} 
 <form action={% url 'login' %} method="POST">
-
-{% csrf_token %}
-	
-<div class="form-group">	
-<input type="text" id="input"  name="username"  required="required"/>
-<label class="control-label" for="input">User Name</label><i class="mtrl-select"></i></label>
-</div>
-<div class="form-group">	
-<input type="password" id="password" name="userpassword" required="required"/>
-<label class="control-label" for="password">Password</label><i class="mtrl-select"></i></label>
-</div>
-<div class="checkbox">
-<label>
-<input type="hidden" id="USER_TYPE" name="user_change" value="user"/>
-
-<input type="checkbox" checked="checked"/><i class="check-box"></i>Always Remember Me.
-</label>
-</div>
-<a href="/accounts/forgetpassword" title="" class="forgot-pwd">Forgot Password?</a>
-<a href="/accounts/signup" title="" class="forgot-pwd">Sign Up?</a>
-<div class="submit-btns text-center md:text-left mx-auto">
-
-<button class="bg-sky-700 mr-3 hover:bg-sky-800 transition-all duration-300 hover:scale-105 rounded py-2 px-4" type="submit"><span>Login</span></button>
-
-	{% include 'footer_login.html' %}
-
-
+    {% csrf_token %}
+    
+    <div class="form-group">    
+        <input type="text" id="input"  name="username"  required="required"/>
+        <label class="control-label" for="input">User Name</label><i class="mtrl-select"></i></label>
+    </div>
+    <div class="form-group">    
+        <input type="password" id="password" name="userpassword" required="required"/>
+        <label class="control-label" for="password">Password</label><i class="mtrl-select"></i></label>
+    </div>
+    <div class="checkbox">
+        <label>
+            <input type="hidden" id="USER_TYPE" name="user_change" value="user"/>
+            <input type="checkbox" checked="checked"/><i class="check-box"></i>Always Remember Me.
+        </label>
+    </div>
+    <a href="/accounts/forgetpassword" title="" class="forgot-pwd">Forgot Password?</a>
+    <a href="/accounts/signup" title="" class="forgot-pwd">Sign Up?</a>
+    <div class="submit-btns text-center md:text-left mx-auto">
+        <button class="bg-sky-700 mr-3 hover:bg-sky-800 transition-all duration-300 hover:scale-105 rounded py-2 px-4" type="submit"><span>Login</span></button>
+    </div>
+</form>
+{% include 'footer_login.html' %}
