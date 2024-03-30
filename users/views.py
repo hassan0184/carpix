@@ -35,6 +35,7 @@ def forget_password_view(request):
             user = User.objects.get(email=email)
             new_password = generate_random_password()
             user.set_password(new_password) 
+            print("new password is :",new_password)
             user.save()
             send_mail(
                 'Password Reset',
@@ -67,7 +68,7 @@ def user_signup_view(request):
 @login_required 
 def user_profile_view(request):
     if request.user:
-        profile = Profile.objects.get(user=request.user)
+        profile = Profile.objects.filter(user=request.user).first()
         return render(request, "user_profile.html", {"profile":profile})
     
 

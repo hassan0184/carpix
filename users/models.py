@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-
+from django.utils import timezone
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -55,7 +55,7 @@ class User(AbstractUser):
         return self.get_role_display()
     
 
-from django.utils import timezone
+
 
 class Profile(models.Model):
     first_name = models.CharField(max_length=100)
