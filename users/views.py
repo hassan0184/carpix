@@ -5,8 +5,11 @@ from .utils import generate_random_password
 from django.core.mail import send_mail
 from users.forms.signup_form import UserSignupForm
 from users.forms.edit_profile_form import EditProfileForm
+from users.forms.change_password_form import ChangePasswordForm
 from users.models import Profile
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
 
 def custom_logout_view(request):
     logout(request)
@@ -28,7 +31,6 @@ def custom_login_view(request):
 
 
 def forget_password_view(request):
-  
     if request.method == 'POST':
         email = request.POST.get('email')
         try:
@@ -60,6 +62,13 @@ def user_signup_view(request):
                 username=form.cleaned_data.get("username"),
                 password=form.cleaned_data.get("password")
             )
+            profile = Profile.objects.create(
+                first_name=form.cleaned_data.get("first_name", None),
+                last_name=form.cleaned_data.get("last_name",None),
+                email=form.cleaned_data.get("email"),
+                user=user
+            )
+            messages.success(request, "Account created successfully")
             return redirect('login')
     else:
         form = UserSignupForm()
@@ -85,6 +94,29 @@ def edit_profile_view(request):
 
 @login_required
 def user_logout_view(request):
-    print("in user_logout_view", request.user)
     logout(request)
     return render(request, "login.html")
+
+
+
+@login_required
+def change_password_view(request):
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.POST)
+        user = User.objects.filter(username=request.user.username).first()
+        old_password = request.POST.get("old_password")
+    
+        if not user.check_password(old_password):
+            messages.error(request, 'Old password is incorrect')
+            return render(request, 'change_password.html', {'form': form})
+        
+        if form.is_valid():
+            new_password = form.cleaned_data.get("new_password")
+            user.set_password(new_password)
+            user.save()
+            
+            messages.success(request, 'Your password has been changed successfully.')
+            return redirect('login')
+    else:
+        form = UserSignupForm()
+    return render(request, 'change_password.html', {'form': form})

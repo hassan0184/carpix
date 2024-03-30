@@ -2,12 +2,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="" />
-    <meta name="keywords" content="" />
-	<title>CarPix Portal</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <title>Carpix portal</title>
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 
 
     <link rel="icon" href="{% static '../media/logo.png' %}" type="image/png" sizes="16x16">
@@ -16,14 +14,11 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/color.css' %}">
     <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
-	<!-- <script src="https://cdn.tailwindcss.com"></script>
-	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
-
-
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  
 </head>
+<body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light primary">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light primary">
     <a class="navbar-brand" href="/">Carpix Portal</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -37,13 +32,26 @@
         <li class="nav-item">
           <a class="nav-link" href="#">Create User/Manager</a>
         </li>
+        {% if request.user.is_authenticated and request.user.is_staff %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'home' %}">Booth</a>
+        </li>
+        {% else %}
+        {% endif %}
           {% if request.user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link" href="{%url 'myprofile' %}">My Profile</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-          </li>
+        
+          <div class="btn-group">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Profile Management
+            </button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="{%url 'myprofile' %}">My Profile</a>
+              <a class="dropdown-item" href="{% url 'editprofile' %}">Edit Profile</a>
+              <a class="dropdown-item" href="{% url 'change-password' %}">Change Password</a>
+              <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+             
+            </div>
+          </div>
           {% else %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'login' %}">Login</a>
@@ -51,8 +59,13 @@
           {% endif %}
       </ul>
       <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <input class="form-control mr-sm-2" type="search" id="search-image" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
       </form>
     </div>
 </nav>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
