@@ -1,8 +1,14 @@
 from django.urls import path
-from .views import location_management,booth_management,camera_management
+from .views import add_location,view_location,delete_location,add_booth,view_booth,delete_booth,add_camera,view_camera,delete_camera
 
 urlpatterns = [
-    path('location-management/', location_management, name='location_management'),
-    path('booth-management/', booth_management, name='booth_management'),
-    path('camera-management/', camera_management, name='camera_management'),
+    path('add-location/', add_location, name='add_location'),
+    path('view-location/', view_location, name='view_location'),
+    path('delete-location/<int:id>', delete_location, name='delete_location'),
+    path('add-booth/', add_booth, name='add_booth'),
+    path('view-booth/', view_booth, name='view_booth'),
+    path('delete-booth/<int:id>', delete_booth, name='delete_booth'),
+    path('add-camera/', add_camera, name='add_camera'),
+    path('view-camera/', view_camera, name='view_camera'),
+    path('delete-camera/<int:id>', delete_camera, name='delete_camera'),
 ]

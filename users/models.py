@@ -46,8 +46,9 @@ class User(AbstractUser):
         (MANAGER, "manager"),
         (USER, "user"),
     )
+    fullname=models.CharField(max_length=255,null=True,blank=True)
     email = models.EmailField(unique=True)
-    role = models.PositiveIntegerField(choices=ROLES_CHOICES)
+    role = models.PositiveIntegerField(choices=ROLES_CHOICES,default=1)
     objects = UserManager()
     REQUIRED_FIELDS = ["email", "password"]
 
