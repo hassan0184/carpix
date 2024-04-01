@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enter OTP</title>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<style>
+.otp-input {
+width: 40px;
+height: 40px;
+text-align: center;
+margin: 0 5px;
+font-size: 18px;
+}
+</style>
+</head>
+<body>
+
+<div class="container mt-5">
+<div class="row justify-content-center">
+<div class="col-md-6">
+    <div class="card">
+    <div class="card-body">
+        <h2 class="card-title mb-4">Enter OTP</h2>
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %}" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %} 
+        <form action="{% url 'otpinput' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group d-flex justify-content-center">
+            <input type="text" class="form-control otp-input" name="otp1" required="required" id="otp1" maxlength="1" pattern="\d" required>
+            <input type="text" class="form-control otp-input" name="otp2" id="otp2" required="required" maxlength="1" pattern="\d" required>
+            <input type="text" class="form-control otp-input" name="otp3" id="otp3" maxlength="1" required="required" pattern="\d" required>
+            <input type="text" class="form-control otp-input" name="otp4" id="otp4" maxlength="1" required="required" pattern="\d" required>
+            <input type="text" class="form-control otp-input" name="otp5" id="otp5" maxlength="1" required="required" pattern="\d" required>
+            <input type="text" class="form-control otp-input" name="otp6" id="otp6" maxlength="1" pattern="\d" required>  
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+        </form>
+    </div>
+    </div>
+</div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+// Function to focus next input field on reaching maxlength
+$('.otp-input').keyup(function() {
+if (this.value.length == this.maxLength) {
+    $(this).next('.otp-input').focus();
+}
+});
+</script>
+</body>
+</html>

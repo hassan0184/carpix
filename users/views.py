@@ -9,6 +9,10 @@ from users.forms.change_password_form import ChangePasswordForm
 from users.models import Profile
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from users.utils import send_otp
+from datetime import datetime
+import pyotp
+from django.urls import resolve
 
 
 def custom_logout_view(request):
@@ -22,8 +26,9 @@ def custom_login_view(request):
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(request, user)
-            return render(request, "dashboard.html")
+            send_otp(request)
+            request.session["username"]=username
+            return redirect("otpinput")
         else:
             return render(request, 'login.html', {'error': 'Invalid username or password'})
     else:
@@ -37,7 +42,6 @@ def forget_password_view(request):
             user = User.objects.get(email=email)
             new_password = generate_random_password()
             user.set_password(new_password) 
-            print("new password is :",new_password)
             user.save()
             send_mail(
                 'Password Reset',
@@ -84,11 +88,13 @@ def user_profile_view(request):
 @login_required
 def edit_profile_view(request):
     if request.method == 'POST':
+        # return redirect("otpinput")
         profile_form = EditProfileForm(request.POST, instance=request.user.profile)
         if profile_form.is_valid():
             profile_form.save()
             return redirect('myprofile')
     else:
+        print("i n else", request.user)
         profile_form = EditProfileForm(instance=request.user.profile)
     return render(request, 'edit_profile.html', {'profile_form': profile_form})
 
@@ -154,3 +160,35 @@ def user_management_view(request):
 
 def all_users_view(request):
     return render(request, "all_users.html", {"users":User.objects.all().exclude(role=1)})
+from django.utils import timezone
+
+
+def otp_input_view(request):
+    if request.method=="POST":
+        username = request.session["username"]
+        otp = request.POST.get('otp1', '') 
+        otp+=request.POST.get('otp2', '') 
+        otp+= request.POST.get('otp3', '') 
+        otp+= request.POST.get('otp4', '') 
+        otp+= request.POST.get('otp5', '') 
+        otp+= request.POST.get('otp6', '')
+        otp_secret_key = request.session["otp_secret_key"]
+        otp_valid_date = request.session["otp_valid_date"]
+        if otp_secret_key and otp_valid_date is not None:
+            valid_untill = datetime.fromisoformat(otp_valid_date)
+            if valid_untill > datetime.now():
+                totp = pyotp.TOTP(otp_secret_key, interval=60)
+                if totp.verify(otp):
+                    login(request, User.objects.get(username=username))
+                    del request.session["otp_secret_key"]
+                    del request.session["otp_valid_date"]
+                    return render(request, "dashboard.html") 
+                else:
+                    messages.error(request, "Invalid OTP entered")
+            else:
+                messages.error(request, "The OTP has expired")
+        else:
+            messages.error(request, "Something went wrong")
+    return render(request, "otp.html")
+
+
