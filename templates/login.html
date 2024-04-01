@@ -1,36 +1,107 @@
 {% load static %}
-{% include 'header_login.html' %}
-<h2 class="ld:text-5xl md:text-3xl text-xl text-center">Login</h2>
-{% if messages %}
-<div class="messages">
-    {% for message in messages %}
-    <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %}" role="alert">
-        {{ message }}
-    </div>
-    {% endfor %}
-</div>
-{% endif %} 
-<form action={% url 'login' %} method="POST">
-    {% csrf_token %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <title>Carpix Portal</title>
+    <link rel="icon" href="{% static 'images/fav.png' %}" type="image/png" sizes="16x16"> 
     
-    <div class="form-group">    
-        <input type="text" id="input"  name="username"  required="required"/>
-        <label class="control-label" for="input">User Name</label><i class="mtrl-select"></i></label>
-    </div>
-    <div class="form-group">    
-        <input type="password" id="password" name="userpassword" required="required"/>
-        <label class="control-label" for="password">Password</label><i class="mtrl-select"></i></label>
-    </div>
-    <div class="checkbox">
-        <label>
-            <input type="hidden" id="USER_TYPE" name="user_change" value="user"/>
-            <input type="checkbox" checked="checked"/><i class="check-box"></i>Always Remember Me.
-        </label>
-    </div>
-    <a href="/accounts/forgetpassword" title="" class="forgot-pwd">Forgot Password?</a>
-    <a href="/accounts/signup" title="" class="forgot-pwd">Sign Up?</a>
-    <div class="submit-btns text-center md:text-left mx-auto">
-        <button class="bg-sky-700 mr-3 hover:bg-sky-800 transition-all duration-300 hover:scale-105 rounded py-2 px-4" type="submit"><span>Login</span></button>
-    </div>
-</form>
-{% include 'footer_login.html' %}
+    <link rel="stylesheet" href="{% static 'css/main.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/color.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+</head>
+<body>
+
+<div class="theme-layout">
+	<div class="theme-layout">
+		<div class="container-fluid pdng0">
+			<div class="row merged">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					<div class="land-featurearea">
+						<div class="land-meta">
+							<h1 class="font-weight-bold">Carpix</h1>
+							<p class="font-weight-bold">
+								Simplifying Image Management with Security and Precision.<br>
+								Streamline Your Data, Enhance Your Vision.
+								Capture, Store, Retrieve – Effortlessly.
+							</p>
+							<div class="friend-logo">
+								<span>
+									<img src="{% static 'images/wink.png' %}" alt="Your Image Description">
+								</span>
+							</div>
+							<a href="#" title="" class="folow-me">Follow Us on</a>
+							<div class="social-icons">
+								<a href="https://www.facebook.com/yourpage" target="_blank"><i class="fab fa-facebook-f m-1"></i></a>
+								<a href="https://www.instagram.com/yourpage" target="_blank"><i class="fab fa-instagram m-1"></i></a>
+								<a href="https://twitter.com/yourpage" target="_blank"><i class="fab fa-twitter m-1"></i></a>
+							</div>
+							
+						</div>	
+					</div>
+				</div>
+				
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					<div class="login-reg-bg">
+						<div class="log-reg-area sign">
+							<div class="messages">
+								{% for message in messages %}
+								<div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %}" role="alert">
+									{{ message }}
+								</div>
+								{% endfor %}
+							</div>
+							<h2 class="log-title">Login</h2>
+								<form action={% url 'login' %} method="POST">
+									{% csrf_token %}
+									<div class="form-group">	
+										<input type="text" name="username" required="required"/>
+										<label class="control-label" for="input">User Name</label><i class="mtrl-select"></i>
+									  </div>
+									  <div class="form-group">	
+										<input type="password" name="userpassword" required="required"/>
+										<label class="control-label" for="input">Password</label><i class="mtrl-select"></i>
+									  </div>
+                                      <div class="checkbox">
+                                        <label>
+                                            <input type="hidden" id="USER_TYPE" name="user_change" value="user"/>
+                                            <input type="checkbox" checked="checked"/><i class="check-box"></i>Always Remember Me.
+                                        </label>
+                                    </div>
+                                    <a href="/accounts/forgetpassword" title="" class="forgot-pwd mt-1">Forgot Password?</a>
+									  
+									<div class="submit-btns">
+											<button type="submit" class="mtr-btn signin" ><span>Login</span></button>
+                                            <a href="{% url 'signup' %}">
+                                                <button type="button" class="mtr-btn signin"><span>Register</span></button>
+                                            </a>
+
+                                            {% comment %} <button href="accounts/signup/" type="button" class="mtr-btn signin" ><span>Register</span></button> {% endcomment %}
+									</div>
+                                    
+							    </form>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{% static 'js/main.min.js' %}"></script>
+<script src="{% static 'js/script.js' %}"></script>
+
+</body>	
+</html>

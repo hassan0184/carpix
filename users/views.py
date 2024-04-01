@@ -9,6 +9,8 @@ from users.forms.change_password_form import ChangePasswordForm
 from users.models import Profile
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db import IntegrityError
+
 
 
 def custom_logout_view(request):
@@ -23,9 +25,10 @@ def custom_login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return render(request, "dashboard.html")
+            return redirect("dashboard")
         else:
-            return render(request, 'login.html', {'error': 'Invalid username or password'})
+            messages.error(request, 'Invalid Email or Password ')
+            return render(request, 'login.html')
     else:
         return render(request, 'login.html')
 
@@ -37,7 +40,6 @@ def forget_password_view(request):
             user = User.objects.get(email=email)
             new_password = generate_random_password()
             user.set_password(new_password) 
-            print("new password is :",new_password)
             user.save()
             send_mail(
                 'Password Reset',
@@ -48,31 +50,44 @@ def forget_password_view(request):
             )
             return redirect('login') 
         except User.DoesNotExist:
-            return render(request, 'forget_password.html', {'error': 'User with this email does not exist'})
+            messages.error(request, 'Please Enter Your Registered Email')
+            return render(request, 'forget_password.html')
     else:
       return render(request, "forget_password.html")
     
 
 def user_signup_view(request):
     if request.method == 'POST':
-        form = UserSignupForm(request.POST)
-        if form.is_valid():
-            user = User.objects.create_superuser(
-                email=form.cleaned_data.get("email"),
-                username=form.cleaned_data.get("username"),
-                password=form.cleaned_data.get("password")
-            )
-            profile = Profile.objects.create(
-                first_name=form.cleaned_data.get("first_name", None),
-                last_name=form.cleaned_data.get("last_name",None),
-                email=form.cleaned_data.get("email"),
-                user=user
-            )
-            messages.success(request, "Account created successfully")
-            return redirect('login')
+        username = request.POST.get('username')
+        password = request.POST.get('userpassword')
+        email = request.POST.get('useremail')
+        fullname = request.POST.get('fullname')
+
+        if email and password:
+            try: 
+                user = User.objects.create(username=username, email=email, fullname=fullname)
+                user.set_password(password)
+                user.save()
+                messages.success(request, 'Account created successfully! You can now log in.')
+                return render(request, "landing.html")
+            except IntegrityError as e:
+                if 'username' in str(e):
+                    messages.error(request, 'Username is already taken. Please choose a different one.')
+                elif 'email' in str(e):
+                    messages.error(request, 'Email is already registered. Please use a different one.')
+                else:
+                    messages.error(request, 'An error occurred during registration.')
+                return render(request, 'signup.html')
+        else:
+            messages.error(request, 'Please fill in all required fields.')
+            return render(request, 'signup.html')
     else:
-        form = UserSignupForm()
-    return render(request, 'user_signup.html', {'form': form})
+        return render(request, 'signup.html')
+
+
+
+
+
 
 @login_required 
 def user_profile_view(request):

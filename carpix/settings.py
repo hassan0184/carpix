@@ -86,9 +86,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'carpix',
         'USER': 'postgres',
-        'PASSWORD': 'qwerty',
+        'PASSWORD': 'password',
         'HOST': 'localhost',
-        'PORT': '5435'
+        'PORT': '5432'
     }
 }
 

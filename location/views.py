@@ -4,23 +4,38 @@ from django.shortcuts import render, redirect
 from .models import Location,Booth,Camera
 from django.contrib import messages
 
-@staff_member_required
-@login_required
-def location_management(request):
+
+def add_location(request):
+    
     if request.method == 'POST':
         location_name = request.POST.get('location_name')
         if location_name:
             Location.objects.create(name=location_name)
             messages.success(request, 'Location Added Sucessfully')
-            return redirect('home')
+            return redirect('add_location')
 
-    locations = Location.objects.all()
-    return render(request, 'location_management.html', {'locations': locations})
+    return render(request, 'add_location.html')
+
+def view_location(request):
+
+    locations=Location.objects.all().order_by('-id')
+    return render(request, 'view_location.html',{'locations':locations})
 
 
-@staff_member_required
-@login_required
-def booth_management(request): 
+def delete_location(request,id):
+    
+    if request.method == 'DELETE':
+        locations=Location.objects.all().order_by('-id')
+        if id:
+            Location.objects.filter(id=id).delete()
+            messages.success(request, 'Location Deleted Sucessfully')
+            return render(request, 'view_location.html',{'locations':locations})
+    return render(request, 'view_location.html',{'locations':locations})
+
+
+
+def add_booth(request):
+    
     if request.method == 'POST':
         booth_name = request.POST.get('booth_name')
         booth_location_id = request.POST.get('booth_location')  
@@ -28,28 +43,62 @@ def booth_management(request):
             booth_location = Location.objects.get(pk=booth_location_id) 
             Booth.objects.create(name=booth_name, location=booth_location)
             messages.success(request, 'Booth Added Successfully')
-            return redirect('home')
-    booths=Booth.objects.all()
-    return render(request, 'booth_management.html',{'booths':booths})
+            return redirect('add_booth')
+    
+    locations=Location.objects.all().order_by('-id')
+    return render(request, 'add_booth.html',{"locations":locations})
+
+def view_booth(request):
+
+    booths=Booth.objects.all().order_by('-id')
+    locations=Location.objects.all().order_by('-id')
+    cameras=Camera.objects.all().order_by('-id')
+    return render(request, 'view_booth.html',{'booths':booths,"locations":locations,"cameras":cameras})
 
 
-@staff_member_required
-@login_required
-def camera_management(request):
+def delete_booth(request,id):
+
+    booths=Booth.objects.all().order_by('-id')
+    if request.method == 'DELETE':
+        if id:
+            Booth.objects.filter(id=id).delete()
+            messages.success(request, 'Booth Deleted Sucessfully')
+            return render(request, 'view_booth.html',{'Booths':booths})
+    return render(request, 'view_booth.html',{'booths':booths})
+
+
+
+def add_camera(request):
+    
     if request.method == 'POST':
         camera_name = request.POST.get('camera_name')
         location_id = request.POST.get('location') 
         booth_id = request.POST.get('booth')
-        
         if camera_name and location_id and booth_id:
             location = Location.objects.get(pk=location_id)
             booth = Booth.objects.get(pk=booth_id)
-            
             Camera.objects.create(name=camera_name, location=location, booth=booth)
-            
             messages.success(request, 'Camera Added Successfully')
-            return redirect('home')
+            return redirect('add_camera')
     
-    cameras = Camera.objects.all()
-    return render(request, 'camera_management.html', {'cameras': cameras})
+    booths=Booth.objects.all().order_by('-id')
+    locations=Location.objects.all().order_by('-id')
+    return render(request, 'add_camera.html',{'booths':booths,"locations":locations})
+
+def view_camera(request):
+
+    cameras=Camera.objects.all().order_by('-id')
+    return render(request, 'view_camera.html',{'cameras':cameras})
+
+
+def delete_camera(request,id):
+    
+    if request.method == 'DELETE':
+        cameras=Camera.objects.all().order_by('-id')
+        if id:
+            Camera.objects.filter(id=id).delete()
+            messages.success(request, 'Camera Deleted Sucessfully')
+            return render(request, 'view_camera.html',{'cameras':cameras})
+    return render(request, 'view_camera.html',{'cameras':cameras})
+
 
