@@ -23,24 +23,70 @@
 
 </head>
 <body>
-  {% if messages %}
-  {% for i in messages %}
- <script>
-     Swal.fire({
-  icon: 'success',
-  title: 'Updated',
-  text: '{{i}}',
-  footer: '<a style="color:#598CF7" href=" {% url 'myprofile' %}">My Profile </a>'
-}) 
- </script> 
-  {% endfor %}
-{% endif %}
+    {% if messages %}
+        {% for i in messages %}
+       <script>
+           Swal.fire({
+        icon: 'success',
+        title: 'Added',
+        text: '{{i}}',
+        footer: '<a style="color:#598CF7" href=" {% url 'allusers' %}">All Users </a>'
+      }) 
+     
+      
+       </script>
+       
+        {% endfor %}
+      
+      {% endif %}
 <div class="theme-layout" style="background-color: rgb(3 105 161);">
     <div >
 
-        <h3 class="text-5xl text-center py-3 text-white shadow-md">My Profile View</h3>
+        <h3 class="text-5xl text-center py-3 text-white shadow-md">All users</h3>
     </div>
+    <div class="modal fade" id="editUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
 
+                <div class="modal-body">
+                   
+                    <form  action="" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="hidden" name="userid" class="form-control" id="userid" aria-describedby="useridHelp">
+                        </div>
+                        <div class="form-group">
+                            <label for="username" class="col-form-label">Username</label>
+                            <input type="text" name="username" class="form-control" id="username" aria-describedby="usernameHelp">
+                        </div>
+                        <div class="form-group">
+                            <label for="fullname">Name</label>
+                            <input type="text" name="fullname" class="form-control" id="fullname" aria-describedby="fullnameHelp">
+                        </div>
+                        <div class="form-group">
+                            <label for="Email" class="col-form-label">Email</label>
+                            <input type="email" value="" class="form-control" id="email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone-number" class="col-form-label">Phone</label>
+                            <input type="number" value="" class="form-control" id="phone" name="phone">
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button onclick="editUser()" type="submit" class="btn btn-primary">Save User</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 	<section>
 		<div class="gap gray-bg">
@@ -50,7 +96,31 @@
 						<div class="row" id="page-contents">
 							<div class="col-lg-3">
 								<aside class="sidebar static">
-									
+									{% comment %} <div class="widget">
+										<h4 class="widget-title">Recent Activity</h4>
+										<ul class="activitiez">
+											<li>
+												<div class="activity-meta">
+													<i>10 hours Ago</i>
+													<span><a title="" href="#">Commented on Video posted </a></span>
+													<h6>by <a href="time-line.html">black demon.</a></h6>
+												</div>
+											</li>
+											<li>
+												<div class="activity-meta">
+													<i>30 Days Ago</i>
+													<span><a title="" href="#">Posted your status. “Hello guys, how are you?”</a></span>
+												</div>
+											</li>
+											<li>
+												<div class="activity-meta">
+													<i>2 Years Ago</i>
+													<span><a title="" href="#">Share a video on her timeline.</a></span>
+													<h6>"<a href="#">you are so funny mr.been.</a>"</h6>
+												</div>
+											</li>
+										</ul>
+									</div> {% endcomment %}
 									<div class="widget stick-widget">
 										<h4 class="widget-title">Edit info</h4>
 										<ul class="naves">
@@ -81,53 +151,52 @@
                             <div class="col-lg-6">
                                 <div class="central-meta">
                                     <div class="frnds">
-                  
-                                        <!-- Location dropdown -->
-                                        <div class="container" >
-                                            <div class="row justify-content-end">
-                                            </div>
+                                        <ul class="nav nav-tabs">
+                                            <li class="nav-item"><a class="active" href="#frends" data-toggle="tab">All Users</a> <span>{{users.count}}</span></li>
+                                        </ul>
+                            
+                                        <!-- Search input -->
+                                        <div class="input-group mt-3">
+                                            <input type="text" id="searchInput" class="form-control" placeholder="Search...">
                                         </div>
-                                    
+                            
                                         <!-- Tab panes -->
                                         <div class="tab-content">
                                             <div class="tab-pane active fade show" id="frends">
                                                 <div class="table-responsive">
-                                                    <table class="table" id="locationsTable">
+                                                    <table class="table" id="usersTable">
                                                         <thead>
                                                             <tr>
                                                                 <th>Username</th>
-                                                                <th>Full Name</th>
                                                                 <th>Email</th>
                                                                 <th>Contact</th>
-                                                                <th>Address</th>
+                                                                <th>Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr  id="delete_location{{booth.id}}" class="boothRow" data-location="{{ booth.location.id }}">
-                                                                <td>{{ profile.user.username }}</td>
+                                                            {% for user in users %}
+                                                            <tr id="delete_user{{user.id}}">
+                                                                
+                                                                <td>{{ user.username }}</td>
+                                                                <td>{{ user.email }}</td>
+                                                                <td>{{ user.profile.phone }}</td>
+                                                                <td><button onclick="deleteUser({{user.id}})" class="delete-user p-1 btn rounded" style="background-color: rgb(3 105 161);color:white;" data-ripple="">Delete</button></td>
+
                                                                 <td>
-                                                                        {{ profile.user.fullname }}
+                                                                    <button onclick="openModal({{ user.id }}, '{{ user.username}}','{{ user.fullname}}', '{{ user.email }}', '{{ user.profile.phone }}')" class="edit-user p-1 btn rounded" data-toggle="modal" data-target="#editUser" style="background-color: rgb(3 105 161); color:white;" data-ripple="">Edit</button>
                                                                 </td>
-                                                                <td >
-                                                                        {{profile.email}}
+                                                                <td>
+                                                                    {% if user.is_active %}
+                                                                        <button id="deactivate_button_{{ user.id }}" onclick="toggleUserStatus({{ user.id }}, false)" class="btn btn-sm btn-success">Deactivate</button>
+                                                                    {% else %}
+                                                                        <button id="activate_button_{{ user.id }}" onclick="toggleUserStatus({{ user.id }}, true)" class="btn btn-sm btn-secondary">Activate</button>
+                                                                    {% endif %}
                                                                 </td>
-                                                                <td >
-                                                                  {{profile.phone}}
-                                                          </td>
-                                                          <td >
-                                                            {{profile.address}}
-                                                    </td>
                                                             </tr>
+                                                            
+                                                            {% endfor %}
                                                         </tbody>
                                                     </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-
                                                 </div>
                                             </div>
                                         </div>
@@ -296,43 +365,23 @@
 	<script src="js/map-init.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8c55_YHLvDHGACkQscgbGLtLRdxBDCfI"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    <script>
-        document.getElementById('locationSelect').addEventListener('change', function() {
-            var selectedLocationId = this.value;
-            var boothRows = document.querySelectorAll('.boothRow');
-    
-            // Hide all booth rows
-            for (var i = 0; i < boothRows.length; i++) {
-                boothRows[i].style.display = 'none';
-            }
-    
-            // Show booth rows associated with the selected location
-            if (selectedLocationId !== '') {
-                var selectedBooths = document.querySelectorAll('.boothRow[data-location="' + selectedLocationId + '"]');
-                for (var i = 0; i < selectedBooths.length; i++) {
-                    selectedBooths[i].style.display = 'table-row';
-                }
-            }
-        });
-    </script>
-    <script>
+<script>
     $(document).ready(function () {
         $('#searchInput').on('keyup', function () {
             var searchText = $(this).val().toLowerCase();
-            $('#locationsTable tbody tr').each(function () {
+            $('#usersTable tbody tr').each(function () {
                 var rowText = $(this).text().toLowerCase();
                 $(this).toggle(rowText.indexOf(searchText) > -1);
             });
         });
     });
 
-    function deleteLocation(id) {
-        var url = "/location/delete-booth/" + id;
+    function deleteUser(id) {
+        var url = "/accounts/delete-user/" + id;
         
         // Get CSRF token
         var csrftoken = getCookie('csrftoken');
-		$("#delete_location" + id).remove();
+		$("#delete_user" + id).remove();
         
         // Include CSRF token in AJAX request
         $.ajax({
@@ -345,16 +394,54 @@
             success: function (data) {
                 console.log("deleted",data)
                 // Remove the deleted location's row from the table
-                $("#delete_location" + id).remove();
+                $("#delete_user" + id).remove();
             },
             error: function (xhr, status, error) {
                 console.error("Error:", error);
             }
         });
     }
+
+function openModal(id, username, fullname, email, phone) {
+    $('#userid').val(id)
+    $('#username').val(username);
+     $('#fullname').val(fullname);
+    $('#email').val(email);
+    $('#phone').val(phone);
+}
+function editUser() {
+    console.log("in edit user")
+    var url = "/accounts/edit-user/" + $('#userid').val();
+
+    var username = $('#username').val();
+    var fullname = $('#fullname').val();
+    var email = $('#email').val();
+    var phone = $('#phone').val();
     
-    
-    // Function to get CSRF token from cookie
+    var csrftoken = getCookie('csrftoken');
+
+    $.ajax({
+        url: url,
+        type: "POST",
+        dataType: "html",
+        beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            },
+        data: {
+            'username': username,
+            'fullname': fullname,
+            'email': email,
+            'phone': phone
+                },
+        success: function (data) {
+            $('#editUser').modal('hide');  
+           },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+}
+
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -371,6 +458,46 @@
         }
         return cookieValue;
     }
+    function toggleUserStatus(userId, isActive) {
+        console.log("Toggle User Status function called", userId, isActive);
+    var newStatus = isActive ? false : true; // Toggle the current status
+    var url = "/accounts/change-user-status/" + userId;
+
+    // Get CSRF token
+    var csrftoken = getCookie('csrftoken');
+
+    $.ajax({
+        url: url,
+        type: "POST",
+        dataType: "html", 
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        },
+        data: {
+            'is_active': isActive
+        },
+        success: function (data) {
+            // Check if the status was updated successfully
+            if (data.success) {
+                // Update the UI based on the new status
+                if (isActive) {
+                    $('#activate_button_' + userId).removeClass('btn-success').addClass('btn-secondary').text('Deactivate');
+                } else {
+                    $('#deactivate_button_' + userId).removeClass('btn-secondary').addClass('btn-success').text('Activate');
+                }
+            } else {
+                // Handle the case when the status update fails
+                console.error("Failed to update user status");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+}
+
+
+
 </script>
    
 </body>	

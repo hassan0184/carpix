@@ -62,8 +62,13 @@
 								{% endfor %}
 							</div>
 							<h2 class="log-title">Register</h2>
-								<form action={% url 'signup' %} method="POST">
+								<form action={% url 'usermanagement' %} method="POST">
 									{% csrf_token %}
+                                    {% for error in form.non_field_errors %}
+                                            <div class="message error text-danger" role="alert">
+                                               <li>{{ error }}</li>
+                                            </div>
+                                        {% endfor %}
 									<div class="form-group">	
 										<input type="text" name="fullname" required="required"/>
 										<label class="control-label" for="input">First & Last Name</label><i class="mtrl-select"></i>
@@ -74,7 +79,7 @@
 									  </div>
 									  <div class="form-group">	
 										<input type="password" name ="password" required="required"/>
-										<label class="control-label" for="input">Password</label><i class="mtrl-select"></i>
+										<label class="control-label" for="input">Passwhhhord</label><i class="mtrl-select"></i>
 									  </div>
 									  <div class="form-group">	
 										<input type="password" name ="confirm_password" required="required"/>
@@ -84,6 +89,12 @@
 										<input type="email" name="email" required="required"/>
 										<label class="control-label" for="input"><a href="https://wpkixx.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6c29010d05002c">[email&#160;protected]</a></label><i class="mtrl-select"></i>
 									  </div>
+                                      <div class="form-group">
+                                        <select class="form-control" id="user_type" name="user_type" required>
+                                          <option value="manager">Manager</option>
+                                          <option value="simple_user">Simple User</option>
+                                        </select>
+                                      </div>
 									  <div class="checkbox">
 										<label>
 										  <input type="checkbox" checked="checked"/><i class="check-box"></i>Accept Terms & Conditions ?

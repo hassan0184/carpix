@@ -221,7 +221,13 @@
 		<div class="top-area">
 			<ul class="main-menu">
 				<li>
-					<a href="#" title="" >Home</a>
+					<a href="#" title="">Profile Managment</a>
+					<ul>
+						<li><a href="{% url 'myprofile' %}" title="">My Profile</a></li>
+						<li><a href="{% url 'editprofile' %}" title="">Edit Profile</a></li>
+						<li><a href="{% url 'change-password' %}" title="">Change Password</a></li>
+						<li><a href="{% url 'logout' %}" title="">Logout</a></li>
+					</ul>
 				</li>
 				<li>
 					<a href="#" title="">Location Managment</a>
@@ -245,7 +251,20 @@
 						<li><a href="about.html" title="">View Cameras</a></li>
 					</ul>
 				</li>
+				{% if request.user and request.user.is_authenticated and request.user.is_staff %}
+				<li>
+					<a href="#" title="">User Management</a>
+					<ul>
+						<li><a href="{% url 'allusers' %}" title="">All users</a></li>
+						<li><a href="{% url 'usermanagement' %}" title="">Create User</a></li>
+					</ul>
+				</li>
+				{% else %}
+				{% endif %}
 			</ul>
+			
+		</ul>
+			
 			<ul class="setting-area">
 				<li>
 					<a href="#" title="Home" data-ripple=""><i class="ti-search"></i></a>

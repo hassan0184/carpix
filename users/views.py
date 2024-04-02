@@ -10,7 +10,9 @@ from users.models import Profile
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import IntegrityError
-
+from users.utils import send_otp
+from datetime import datetime
+import pyotp
 
 
 def custom_logout_view(request):
@@ -24,8 +26,9 @@ def custom_login_view(request):
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(request, user)
-            return redirect("dashboard")
+            send_otp(request)
+            request.session["username"]=username
+            return redirect("otpinput")
         else:
             messages.error(request, 'Invalid Email or Password ')
             return render(request, 'login.html')
@@ -58,31 +61,20 @@ def forget_password_view(request):
 
 def user_signup_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('userpassword')
-        email = request.POST.get('useremail')
-        fullname = request.POST.get('fullname')
-
-        if email and password:
-            try: 
-                user = User.objects.create(username=username, email=email, fullname=fullname)
-                user.set_password(password)
-                user.save()
-                messages.success(request, 'Account created successfully! You can now log in.')
-                return render(request, "landing.html")
-            except IntegrityError as e:
-                if 'username' in str(e):
-                    messages.error(request, 'Username is already taken. Please choose a different one.')
-                elif 'email' in str(e):
-                    messages.error(request, 'Email is already registered. Please use a different one.')
-                else:
-                    messages.error(request, 'An error occurred during registration.')
-                return render(request, 'signup.html')
-        else:
-            messages.error(request, 'Please fill in all required fields.')
-            return render(request, 'signup.html')
+        form = UserSignupForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create_superuser(
+                fullname=form.cleaned_data.get("fullname"),
+                email=form.cleaned_data.get("email"),
+                username=form.cleaned_data.get("username"),
+                password=form.cleaned_data.get("password")
+            )
+            Profile.objects.create(fullname=user.fullname,email=user.email, user=user)
+            messages.success(request, "User successfully created")
+            return redirect('login')
     else:
-        return render(request, 'signup.html')
+        form = UserSignupForm()
+    return render(request, 'signup.html', {'form': form})
 
 
 
@@ -102,10 +94,14 @@ def edit_profile_view(request):
         profile_form = EditProfileForm(request.POST, instance=request.user.profile)
         if profile_form.is_valid():
             profile_form.save()
+            messages.success(request, "Profile successfully edited")
             return redirect('myprofile')
+        else:
+            return render(request, 'edit_profile.html', {'profile_form': profile_form, "profile":request.user.profile, "errors":profile_form.non_field_errors})
     else:
         profile_form = EditProfileForm(instance=request.user.profile)
-    return render(request, 'edit_profile.html', {'profile_form': profile_form})
+    print("errors re", profile_form.errors)
+    return render(request, 'edit_profile.html', {'profile_form': profile_form, "profile":request.user.profile, "errors":profile_form.non_field_errors})
 
 @login_required
 def user_logout_view(request):
@@ -128,10 +124,109 @@ def change_password_view(request):
         if form.is_valid():
             new_password = form.cleaned_data.get("new_password")
             user.set_password(new_password)
-            user.save()
-            
+            user.save() 
             messages.success(request, 'Your password has been changed successfully.')
             return redirect('login')
     else:
         form = UserSignupForm()
     return render(request, 'change_password.html', {'form': form})
+
+@login_required
+def user_management_view(request):
+    if request.method == 'POST':
+        form = UserSignupForm(request.POST)    
+        if form.is_valid():
+            if request.POST.get("user_type").lower()=="simple_user":
+                user = User.objects.create_user(
+                fullname=form.cleaned_data.get("fullname"),
+                email=form.cleaned_data.get("email"),
+                username=form.cleaned_data.get("username"),
+                password=form.cleaned_data.get("password")
+            )
+            else:
+                user = User.objects.create_manager_user(
+                    fullname=form.cleaned_data.get("fullname"),
+                    email=form.cleaned_data.get("email"),
+                    username=form.cleaned_data.get("username"),
+                    password=form.cleaned_data.get("password")
+                )
+
+            Profile.objects.create(fullname=user.fullname,email=user.email, user=user)
+            messages.success(request, "User created successfully")
+            return render(request, "all_users.html", {"users":User.objects.all().exclude(role=1)})
+    else:
+        form = UserSignupForm()
+    return render(request, 'user_management.html', {'form': form})
+
+
+def all_users_view(request):
+    return render(request, "all_users.html", {"users":User.objects.all().exclude(role=1)})
+
+def delete_user_view(request, pk):
+    if request.method == 'DELETE':
+        users=User.objects.all().exclude(role=1).order_by('-id')
+        if pk:
+            User.objects.filter(id=pk).delete()
+            messages.success(request, 'User Deleted Sucessfully')
+            return render(request, 'all_users.html',{'users':users})
+    return render(request, 'all_users.html',{'users':users})
+
+def edit_user_view(request, pk):
+    if request.method == 'POST':
+        user=User.objects.filter(id=pk).first()
+        form = EditProfileForm(request.POST, instance=user.profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "User successfully updated")
+            return redirect('allusers')
+        else:
+            return render(request, 'all_users.html', {'users': User.objects.all().exclude(role=1).order_by("-id"), "form":form})
+    
+    users=User.objects.all().exclude(role=1).order_by("-id")
+    return render(request, 'all_users.html', {'users': users})
+
+def change_user_status_view(request, pk):
+    if request.method=="POST":
+        user=User.objects.filter(id=pk).first()
+        if request.POST.get("is_active")=="false":
+            user.is_active=False
+        else:
+            user.is_active=True
+        user.save()
+        return redirect("allusers")
+    return render(request, 'all_users.html', {'users': User.objects.all().exclude(role=1).order_by("-id")})
+
+
+def otp_input_view(request):
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+    if request.method=="POST":
+        username = request.session["username"]
+        otp = request.POST.get('otp1', '') 
+        otp+=request.POST.get('otp2', '') 
+        otp+= request.POST.get('otp3', '') 
+        otp+= request.POST.get('otp4', '') 
+        otp+= request.POST.get('otp5', '') 
+        otp+= request.POST.get('otp6', '')
+        otp_secret_key = request.session["otp_secret_key"]
+        otp_valid_date = request.session["otp_valid_date"]
+        if otp_secret_key and otp_valid_date is not None:
+            valid_untill = datetime.fromisoformat(otp_valid_date)
+            if valid_untill > datetime.now():
+                totp = pyotp.TOTP(otp_secret_key, interval=60)
+                if totp.verify(otp):
+                    login(request, User.objects.get(username=username))
+                    del request.session["otp_secret_key"]
+                    del request.session["otp_valid_date"]
+                    del request.session["username"]
+                    return render(request, "dashboard.html") 
+                else:
+                    messages.error(request, "Invalid OTP entered")
+            else:
+                messages.error(request, "The OTP has expired")
+                return redirect("login")
+        else:
+            messages.error(request, "Something went wrong")
+
+            return redirect("login")
+    return render(request, "otp.html")
