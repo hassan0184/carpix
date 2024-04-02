@@ -9,9 +9,11 @@ class EditProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(EditProfileForm, self).__init__(*args, **kwargs)
+        self.fields['fullname'] = forms.CharField(initial=self.instance.user.fullname, label='Full Name')
         self.fields['username'] = forms.CharField(initial=self.instance.user.username, label='Username')
         self.fields['email'] = forms.EmailField(initial=self.instance.user.email, label='Email')
-        self.fields['birthday'] = forms.DateField(label='Birthday', required=False)  # Add birthday field
+        self.fields["phone"]=forms.CharField(initial=self.instance.phone ,label='Contact')
+        self.fields["address"]=forms.CharField(initial=self.instance.address ,label='Address')
 
     def clean(self):
         cleaned_data = super().clean()
@@ -23,13 +25,13 @@ class EditProfileForm(forms.ModelForm):
             self.add_error('email', "This email is already in use.")
         return cleaned_data
 
-    def save(self, commit=True):
+    def save(self, commit=True):    
         profile = super(EditProfileForm, self).save(commit=False)
         user = profile.user
         user.username = self.cleaned_data['username']
         user.email = self.cleaned_data['email']
+        user.fullname=self.cleaned_data["fullname"]
         user.save()
-        profile.birthday = self.cleaned_data.get('birthday')
         if commit:
             profile.save()
             user.save()

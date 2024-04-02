@@ -23,22 +23,10 @@
 
 </head>
 <body>
-  {% if messages %}
-  {% for i in messages %}
- <script>
-     Swal.fire({
-  icon: 'success',
-  title: 'Updated',
-  text: '{{i}}',
-  footer: '<a style="color:#598CF7" href=" {% url 'myprofile' %}">My Profile </a>'
-}) 
- </script> 
-  {% endfor %}
-{% endif %}
 <div class="theme-layout" style="background-color: rgb(3 105 161);">
     <div >
 
-        <h3 class="text-5xl text-center py-3 text-white shadow-md">My Profile View</h3>
+        <h3 class="text-5xl text-center py-3 text-white shadow-md">OTP Verification</h3>
     </div>
 
 
@@ -88,45 +76,41 @@
                                             </div>
                                         </div>
                                     
-                                        <!-- Tab panes -->
-                                        <div class="tab-content">
-                                            <div class="tab-pane active fade show" id="frends">
-                                                <div class="table-responsive">
-                                                    <table class="table" id="locationsTable">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Username</th>
-                                                                <th>Full Name</th>
-                                                                <th>Email</th>
-                                                                <th>Contact</th>
-                                                                <th>Address</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr  id="delete_location{{booth.id}}" class="boothRow" data-location="{{ booth.location.id }}">
-                                                                <td>{{ profile.user.username }}</td>
-                                                                <td>
-                                                                        {{ profile.user.fullname }}
-                                                                </td>
-                                                                <td >
-                                                                        {{profile.email}}
-                                                                </td>
-                                                                <td >
-                                                                  {{profile.phone}}
-                                                          </td>
-                                                          <td >
-                                                            {{profile.address}}
-                                                    </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
+                                        <div class="container mt-5">
+                                            <div class="row justify-content-center">
+                                            <div class="col-md-6">
+                                                <div class="card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title mb-4">Enter OTP sent you on email</h5>
+                                                    {% if messages %}
+                                                    <div class="messages">
+                                                        {% for message in messages %}
+                                                        <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %}" role="alert">
+                                                            {{ message }}
+                                                        </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% endif %} 
+                                                    <form action="{% url 'otpinput' %}" method="post">
+                                                    {% csrf_token %}
+                                                    <div class="form-group d-flex justify-content-center">
+                                                        <input type="text" class="form-control otp-input border border-primary" name="otp1" required="required" id="otp1" maxlength="1" pattern="\d" required>
+                                                        <input type="text" class="form-control otp-input border border-primary" name="otp2" id="otp2" required="required" maxlength="1" pattern="\d" required>
+                                                        <input type="text" class="form-control otp-input border border-primary" name="otp3" id="otp3" maxlength="1" required="required" pattern="\d" required>
+                                                        <input type="text" class="form-control otp-input border border-primary" name="otp4" id="otp4" maxlength="1" required="required" pattern="\d" required>
+                                                        <input type="text" class="form-control otp-input border border-primary" name="otp5" id="otp5" maxlength="1" required="required" pattern="\d" required>
+                                                        <input type="text" class="form-control otp-input border border-primary" name="otp6" id="otp6" maxlength="1" pattern="\d" required>  
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                                    </form>
+                                                </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                            </div>
+                                            </div>
                                     </div>
                                 </div>
                             </div>
-                            
 
                                                 </div>
                                             </div>
@@ -298,79 +282,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script>
-        document.getElementById('locationSelect').addEventListener('change', function() {
-            var selectedLocationId = this.value;
-            var boothRows = document.querySelectorAll('.boothRow');
+       $('.otp-input').keyup(function() {
+if (this.value.length == this.maxLength) {
+    $(this).next('.otp-input').focus();
+}
+});
     
-            // Hide all booth rows
-            for (var i = 0; i < boothRows.length; i++) {
-                boothRows[i].style.display = 'none';
-            }
-    
-            // Show booth rows associated with the selected location
-            if (selectedLocationId !== '') {
-                var selectedBooths = document.querySelectorAll('.boothRow[data-location="' + selectedLocationId + '"]');
-                for (var i = 0; i < selectedBooths.length; i++) {
-                    selectedBooths[i].style.display = 'table-row';
-                }
-            }
-        });
-    </script>
-    <script>
-    $(document).ready(function () {
-        $('#searchInput').on('keyup', function () {
-            var searchText = $(this).val().toLowerCase();
-            $('#locationsTable tbody tr').each(function () {
-                var rowText = $(this).text().toLowerCase();
-                $(this).toggle(rowText.indexOf(searchText) > -1);
-            });
-        });
-    });
-
-    function deleteLocation(id) {
-        var url = "/location/delete-booth/" + id;
-        
-        // Get CSRF token
-        var csrftoken = getCookie('csrftoken');
-		$("#delete_location" + id).remove();
-        
-        // Include CSRF token in AJAX request
-        $.ajax({
-            url: url,
-            type: "DELETE",
-            dataType: "json",
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            },
-            success: function (data) {
-                console.log("deleted",data)
-                // Remove the deleted location's row from the table
-                $("#delete_location" + id).remove();
-            },
-            error: function (xhr, status, error) {
-                console.error("Error:", error);
-            }
-        });
-    }
-    
-    
-    // Function to get CSRF token from cookie
-    function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = cookies[i].trim();
-                // Check if the cookie name matches the expected format
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    // Extract and decode the CSRF token
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
 </script>
    
 </body>	
