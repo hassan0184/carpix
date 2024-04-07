@@ -74,10 +74,11 @@ def add_camera(request):
         camera_name = request.POST.get('camera_name')
         location_id = request.POST.get('location') 
         booth_id = request.POST.get('booth')
-        if camera_name and location_id and booth_id:
+        ip_address=request.POST.get("ip_address")
+        if camera_name and location_id and booth_id and ip_address:
             location = Location.objects.get(pk=location_id)
             booth = Booth.objects.get(pk=booth_id)
-            Camera.objects.create(name=camera_name, location=location, booth=booth)
+            Camera.objects.create(name=camera_name, location=location, booth=booth, ip_address=ip_address)
             messages.success(request, 'Camera Added Successfully')
             return redirect('add_camera')
     

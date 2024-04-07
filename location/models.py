@@ -1,4 +1,5 @@
 from django.db import models
+from simple_history.models import HistoricalRecords 
 
 class Location(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -18,6 +19,9 @@ class Camera(models.Model):
     booth = models.ForeignKey(Booth, on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(max_length=255, blank=True)
     status = models.CharField(max_length=20, choices=(('active', 'Active'), ('inactive', 'Inactive')), default='active')
+    ip_address = models.CharField(max_length=255, blank=True, null=True)
+    history = HistoricalRecords()
+
 
     def __str__(self):
         location_name = self.location.name
