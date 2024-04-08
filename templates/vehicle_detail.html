@@ -23,26 +23,10 @@
 
 </head>
 <body>
-    {% if messages %}
-        {% for i in messages %}
-       <script>
-           Swal.fire({
-        icon: 'success',
-        title: 'Added',
-        text: 'Location has been Updated Successfully!',
-        footer: '<a style="color:#598CF7" href=" {% url 'view_location' %}">View Location </a>'
-      }) 
-     
-      
-       </script>
-       
-        {% endfor %}
-      
-      {% endif %}
 <div class="theme-layout" style="background-color: rgb(3 105 161);">
     <div >
 
-        <h3 class="text-5xl text-center py-3 text-white shadow-md">View Cameras</h3>
+        <h3 class="text-5xl text-center py-3 text-white shadow-md">Vehicle Details</h3>
     </div>
 
 
@@ -54,7 +38,31 @@
 						<div class="row" id="page-contents">
 							<div class="col-lg-3">
 								<aside class="sidebar static">
-
+									{% comment %} <div class="widget">
+										<h4 class="widget-title">Recent Activity</h4>
+										<ul class="activitiez">
+											<li>
+												<div class="activity-meta">
+													<i>10 hours Ago</i>
+													<span><a title="" href="#">Commented on Video posted </a></span>
+													<h6>by <a href="time-line.html">black demon.</a></h6>
+												</div>
+											</li>
+											<li>
+												<div class="activity-meta">
+													<i>30 Days Ago</i>
+													<span><a title="" href="#">Posted your status. “Hello guys, how are you?”</a></span>
+												</div>
+											</li>
+											<li>
+												<div class="activity-meta">
+													<i>2 Years Ago</i>
+													<span><a title="" href="#">Share a video on her timeline.</a></span>
+													<h6>"<a href="#">you are so funny mr.been.</a>"</h6>
+												</div>
+											</li>
+										</ul>
+									</div> {% endcomment %}
 									<div class="widget stick-widget">
 										<h4 class="widget-title">Edit info</h4>
 										<ul class="naves">
@@ -83,54 +91,36 @@
 								</aside>
 							</div><!-- sidebar -->
                             <div class="col-lg-6">
-                                <div class="central-meta">
-                                    <div class="frnds">
-                                        <ul class="nav nav-tabs">
-                                            <li class="nav-item"><a class="active" href="#frends" data-toggle="tab">Available Cameras</a> <span>{{cameras.count}}</span></li>
-                                        </ul>
-                            
-                                        <!-- Search input -->
-                                        <div class="input-group mt-3">
-                                            <input type="text" id="searchInput" class="form-control" placeholder="Search...">
-                                        </div>
-                            
-                                        <!-- Tab panes -->
-                                        <div class="tab-content">
-                                            <div class="tab-pane active fade show" id="frends">
-                                                <div class="table-responsive">
-                                                    <table class="table" id="locationsTable">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Name</th>
-                                                                <th>Location</th>
-                                                                <th>Booth</th>
-                                                                <th>Status</th>
-																<th>IP Address</th>
-                                                                <th>Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {% for camera in cameras %}
-                                                            <tr id="delete_location{{camera.id}}">
-                                                                <td>{{ camera.name }}</td>
-                                                                <td>{{ camera.location }}</td>
-                                                                <td>{{ camera.booth }}</td>
-                                                                <td>{{ camera.status }}</td>
-																<td>{{ camera.ip_address }}</td>
-                                                                <td><button onclick="deleteLocation({{camera.id}})" class="delete-location p-1 btn rounded" style="background-color: rgb(3 105 161);color:white;" data-ripple="">Delete</button></td>
-                                                            </tr>
-                                                            {% endfor %}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-							
-									
+								<div class="central-meta">
+									<div class="frnds">
+										<div class="tab-content">
+											<div class="tab-pane active fade show" id="frends">
+												<div class="row">
+													{% for image in vehicle.vehicle_images.all %}
+													<div class="col-md-4 mb-4 mt-3">
+														<div class="card">
+                                                            {{image.image_file.url}}
+															<img src="{{ image.image_file.url }}" class="card-img-top" alt="no image for this vehicle">
+                                                            <a onclick="downloadImage('{{ image.image_file.url }}')" href="" class="btn btn-info btn-small mt-2">
+                                                                <span class="glyphicon glyphicon-download-alt"></span> Download
+                                                              </a>
+														
+														</div>
+            
+													</div>
+													{% endfor %}
+                                                    </div>
+											</div>
+                                            <h3 >Vehicle Details</h3>  
+                                            <span>
+                                                Plate Number: {{ vehicle.plate_number }} <br>
+                                                Contract Number: {{ vehicle.contract_number }}
+                                              </span>
+										</div>
+			
+									</div>
+								</div>
+							</div>	
 				</div>
 			</div>
 		</div>	
@@ -290,62 +280,20 @@
 	<script src="js/map-init.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8c55_YHLvDHGACkQscgbGLtLRdxBDCfI"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $('#searchInput').on('keyup', function () {
-            var searchText = $(this).val().toLowerCase();
-            $('#locationsTable tbody tr').each(function () {
-                var rowText = $(this).text().toLowerCase();
-                $(this).toggle(rowText.indexOf(searchText) > -1);
-            });
-        });
-    });
 
-    function deleteLocation(id) {
-        var url = "/location/delete-camera/" + id;
-        
-        // Get CSRF token
-        var csrftoken = getCookie('csrftoken');
-		$("#delete_location" + id).remove();
-        
-        // Include CSRF token in AJAX request
-        $.ajax({
-            url: url,
-            type: "DELETE",
-            dataType: "json",
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            },
-            success: function (data) {
-                console.log("deleted",data)
-                // Remove the deleted location's row from the table
-                $("#delete_location" + id).remove();
-            },
-            error: function (xhr, status, error) {
-                console.error("Error:", error);
-            }
-        });
-    }
-    
-    
-    // Function to get CSRF token from cookie
-    function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = cookies[i].trim();
-                // Check if the cookie name matches the expected format
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    // Extract and decode the CSRF token
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-</script>
+    <script>
+   function downloadImage(imageUrl) {
+  console.log("in function", imageUrl);
+//   var downloadLink = document.createElement('a');
+//   downloadLink.href = imageUrl;
+//   // Set the desired filename for the downloaded image
+//   downloadLink.download = 'downloaded_image.jpg'; 
+//   document.body.appendChild(downloadLink);
+//   downloadLink.click();
+//   document.body.removeChild(downloadLink);
+}
+
+    </script>
    
 </body>	
 
