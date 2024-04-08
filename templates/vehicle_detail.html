@@ -99,9 +99,8 @@
 													{% for image in vehicle.vehicle_images.all %}
 													<div class="col-md-4 mb-4 mt-3">
 														<div class="card">
-                                                            {{image.image_file.url}}
 															<img src="{{ image.image_file.url }}" class="card-img-top" alt="no image for this vehicle">
-                                                            <a onclick="downloadImage('{{ image.image_file.url }}')" href="" class="btn btn-info btn-small mt-2">
+                                                            <a onclick="downloadImage('{{ image.image_file.url }}')" class="btn btn-info btn-small mt-2">
                                                                 <span class="glyphicon glyphicon-download-alt"></span> Download
                                                               </a>
 														
@@ -275,25 +274,33 @@
 			</form>
 		</div><!-- side panel -->		
 	
-	<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="js/main.min.js"></script>
-	<script src="js/script.js"></script>
-	<script src="js/map-init.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8c55_YHLvDHGACkQscgbGLtLRdxBDCfI"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    <script>
-   function downloadImage(imageUrl) {
+		<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="js/main.min.js"></script>
+		<script src="js/script.js"></script>
+		<script src="js/map-init.js"></script>
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8c55_YHLvDHGACkQscgbGLtLRdxBDCfI"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	
+<script>
+function downloadImage(imageUrl) {
   console.log("in function", imageUrl);
-//   var downloadLink = document.createElement('a');
-//   downloadLink.href = imageUrl;
-//   // Set the desired filename for the downloaded image
-//   downloadLink.download = 'downloaded_image.jpg'; 
-//   document.body.appendChild(downloadLink);
-//   downloadLink.click();
-//   document.body.removeChild(downloadLink);
-}
+  var downloadLink = document.createElement('a');
+  downloadLink.href = imageUrl;
+  downloadLink.download = 'vehicle.jpg'; 
+  var form = document.createElement("form");
+  form.method = "GET";
+  form.action = imageUrl;
+  form.target = "_blank";
+  var hiddenInput = document.createElement("input");
+  hiddenInput.type = "hidden";
+  hiddenInput.name = "Content-Disposition";
+  hiddenInput.value = "attachment";
+  form.appendChild(hiddenInput);
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
 
-    </script>
+}
+</script>
    
 </body>	
 

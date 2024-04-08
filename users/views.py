@@ -26,8 +26,8 @@ def custom_login_view(request):
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            send_otp(request)
             request.session["username"]=username
+            send_otp(request)
             return redirect("otpinput")
         else:
             messages.error(request, 'Invalid Email or Password ')
@@ -125,6 +125,7 @@ def change_password_view(request):
             new_password = form.cleaned_data.get("new_password")
             user.set_password(new_password)
             user.save() 
+            logout(request)
             messages.success(request, 'Your password has been changed successfully.')
             return redirect('login')
     else:
