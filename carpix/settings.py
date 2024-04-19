@@ -26,8 +26,8 @@ SECRET_KEY = 'django-insecure-wmdx(tu8w6hx9-u176(j)0=^p+s@waw2-2s87#q-nq&qk%+-nb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ["*"]
+CORS_ALLOW_ALL_ORIGINS=True
 AUTH_USER_MODEL = 'users.User'
 
 # Application definition
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'location',
     'vehicle',
     'storages',
+    'corsheaders',
 ]
 
 AWS_ACCESS_KEY_ID = ''
@@ -61,6 +62,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -98,9 +100,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'carpix',
         'USER': 'postgres',
-        'PASSWORD': 'password',
+        'PASSWORD': 'qwerty',
         'HOST': 'localhost',
-        'PORT': '5432'
+        'PORT': '5435'
     }
 }
 

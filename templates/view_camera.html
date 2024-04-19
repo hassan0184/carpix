@@ -117,11 +117,17 @@
                                                                 <td>{{ camera.booth }}</td>
                                                                 <td>{{ camera.status }}</td>
 																<td>{{ camera.ip_address }}</td>
-                                                                <td><button onclick="deleteLocation({{camera.id}})" class="delete-location p-1 btn rounded" style="background-color: rgb(3 105 161);color:white;" data-ripple="">Delete</button></td>
+                                                                <td>
+																	<a href="{% url 'view_camera_feed'  %}" class="btn btn-primary">View Live Stream</a>
+																	<button onclick="deleteLocation({{camera.id}})" class="delete-location p-1 btn rounded" style="background-color: rgb(3 105 161);color:white;" data-ripple="">Delete</button></td>
                                                             </tr>
                                                             {% endfor %}
                                                         </tbody>
                                                     </table>
+													<video id="videoPlayer" controls autoplay>
+														<source src="{% url 'view_camera_feed' %}" type="multipart/x-mixed-replace">
+														Your browser does not support the video tag.
+													</video>
                                                 </div>
                                             </div>
                                         </div>

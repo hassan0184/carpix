@@ -3,8 +3,10 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect
 from .models import Location,Booth,Camera
 from django.contrib import messages
-
-
+from django.http import StreamingHttpResponse, HttpResponse, HttpResponseServerError
+import cv2,os
+import numpy as np
+import requests
 def add_location(request):
     
     if request.method == 'POST':
@@ -102,4 +104,21 @@ def delete_camera(request,id):
             return render(request, 'view_camera.html',{'cameras':cameras})
     return render(request, 'view_camera.html',{'cameras':cameras})
 
+def view_camera_feed(request):
+    cap = cv2.VideoCapture('http://196.12.185.250:20205/getimage?profileid=0')
+    def generate():
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            ret, buffer = cv2.imencode('.jpg', frame)
+            if not ret:
+                break
+            yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
+    return StreamingHttpResponse(generate(), content_type="multipart/x-mixed-replace;boundary=frame")
 
+    # return render(request, 'stream_template.html', {'stream': generate()})
+
+
+def camera_stream_view(request):
+  return render(request, 'stream_template.html')
