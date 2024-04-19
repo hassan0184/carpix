@@ -12,5 +12,5 @@ urlpatterns = [
     path('view-camera/', view_camera, name='view_camera'),
     path('view-camera-feed/', view_camera_feed, name='view_camera_feed'),
     path('delete-camera/<int:id>', delete_camera, name='delete_camera'),
-    path("camera-stream-view/",camera_stream_view, name="camera-stream-view" )
+    path("camera-stream-view/",camera_stream_view, name="camera-stream-view" ),
 ]
