@@ -7,6 +7,9 @@ from django.http import StreamingHttpResponse, HttpResponse, HttpResponseServerE
 import cv2,os
 import numpy as np
 import requests
+from django.shortcuts import render, get_object_or_404
+
+
 def add_location(request):
     
     if request.method == 'POST':
@@ -58,6 +61,12 @@ def view_booth(request):
     return render(request, 'view_booth.html',{'booths':booths,"locations":locations,"cameras":cameras})
 
 
+def view_booth_cameras(request, booth_id):
+    booths=Booth.objects.all().order_by('-id')
+    booth = get_object_or_404(Booth, pk=booth_id)
+    cameras = booth.camera_set.all() 
+    return render(request, 'view_booth_cameras.html', {'booth': booth,'booths': booths, 'cameras': cameras})
+
 def delete_booth(request,id):
 
     booths=Booth.objects.all().order_by('-id')
@@ -104,20 +113,27 @@ def delete_camera(request,id):
             return render(request, 'view_camera.html',{'cameras':cameras})
     return render(request, 'view_camera.html',{'cameras':cameras})
 
-def view_camera_feed(request):
-    cap = cv2.VideoCapture('http://196.12.185.250:20205/getimage?profileid=0')
-    def generate():
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                break
-            ret, buffer = cv2.imencode('.jpg', frame)
-            if not ret:
-                break
-            yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
-    return StreamingHttpResponse(generate(), content_type="multipart/x-mixed-replace;boundary=frame")
+# def view_camera_feed(request):
+#     cap = cv2.VideoCapture('http://196.12.185.250:20205/getimage?profileid=0')
+#     def generate():
+#         while True:
+#             ret, frame = cap.read()
+#             if not ret:
+#                 break
+#             ret, buffer = cv2.imencode('.jpg', frame)
+#             if not ret:
+#                 break
+#             yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
+#     return StreamingHttpResponse(generate(), content_type="multipart/x-mixed-replace;boundary=frame")
 
-    # return render(request, 'stream_template.html', {'stream': generate()})
+
+# views.py
+
+def view_camera_feed(request, booth_id):
+    booth = get_object_or_404(Booth, pk=booth_id)
+    cameras = Camera.objects.filter(booth=booth, status='active')  
+    return render(request, 'view_camera_feed.html', {'booth': booth, 'cameras': cameras})
+
 
 
 def camera_stream_view(request):

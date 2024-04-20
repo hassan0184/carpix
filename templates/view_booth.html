@@ -124,7 +124,7 @@
                                                         <tbody>
                                                             {% for booth in booths %}
                                                             <tr  id="delete_location{{booth.id}}" class="boothRow" data-location="{{ booth.location.id }}">
-                                                                <td>{{ booth.name }}</td>
+                                                                <td><a style="color:#598CF7" href="{% url 'view_booth_cameras' booth.id %}">{{ booth.name }}</a></td>
                                                                 <td>
                                                                     {% for camera in booth.camera_set.all %}
                                                                         {{ camera.name }}{% if not forloop.last %}, {% endif %}

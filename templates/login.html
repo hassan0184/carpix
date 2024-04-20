@@ -76,11 +76,11 @@
 								<form action={% url 'login' %} method="POST">
 									{% csrf_token %}
 									<div class="form-group">	
-										<input type="text" name="username" required="required"/>
+										<input type="text" name="username" required="required" />
 										<label class="control-label" for="input">User Name</label><i class="mtrl-select"></i>
 									  </div>
 									  <div class="form-group">	
-										<input type="password" name="userpassword" required="required"/>
+										<input type="password" name="userpassword" required="required" />
 										<label class="control-label" for="input">Password</label><i class="mtrl-select"></i>
 									  </div>
                                       <div class="checkbox">
@@ -113,6 +113,5 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="{% static 'js/main.min.js' %}"></script>
 <script src="{% static 'js/script.js' %}"></script>
-
 </body>	
 </html>

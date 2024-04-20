@@ -23,3 +23,12 @@ def send_otp(request):
             ["raffaywaqar792@gmail.com"],
                 fail_silently=False,
             )
+    
+def send_password_reset_email(email, new_password):
+    send_mail(
+        'Password Reset',
+        f'Your new password is: {new_password}',
+        'cvmaker750@gmail.com',
+        [email],
+        fail_silently=False,
+    )
