@@ -126,7 +126,8 @@
 									{% for camera in cameras %}
 									<div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 m-3">
 										<div class="card mb-3" style="width: 120%; height: 100%;">
-											<img src="{{ camera.ip_address }}" style="width: 100%; height: 80%;" class="card-img-top" alt="Camera Feed">
+											<img src="{{ camera.ip_address }}" style="width: 100%; height: 80%;" class="card-img-top" alt="Camera Feed" id="cameraFeed{{ camera.id }}">
+
 											<div class="card-body">
 												<h5 class="card-title">Camera Name: {{ camera.name }}</h5>
 												<button type="button" class="btn btn-primary select-camera-btn" data-toggle="modal" data-target="#cameraModal{{ camera.id }}">Select</button>
@@ -362,25 +363,22 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script>
 		function takeScreenshot(cameraId) {
-			window.console("heel0")
-			// Find the video element within the modal corresponding to the clicked camera
-			var video = document.querySelector('#cameraModal' + cameraId + ' video');
-			if (video) {
-				// Create a canvas to draw the video frame
-				var canvas = document.createElement('canvas');
-				canvas.width = video.videoWidth;
-				canvas.height = video.videoHeight;
-				var ctx = canvas.getContext('2d');
-				ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-				// Convert the canvas to a data URL representing the image
-				var dataURL = canvas.toDataURL('image/png');
-				// Find the screenshot image element within the modal
-				var screenshotImg = document.querySelector('#cameraModal' + cameraId + ' .img-fluid');
-				// Set the data URL as the source of the screenshot image
-				screenshotImg.src = dataURL;
-			} else {
-				console.error('Video element not found for camera ' + cameraId);
-			}
+			// Get the video element of the corresponding camera
+			var video = document.querySelector('#cameraFeed' + cameraId);
+			
+			// Create a canvas element to draw the screenshot
+			var canvas = document.createElement('canvas');
+			canvas.width = video.videoWidth;
+			canvas.height = video.videoHeight;
+			var ctx = canvas.getContext('2d');
+			ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+			
+			// Convert the canvas content to a data URL representing the image
+			var dataURL = canvas.toDataURL('image/png');
+			
+			// Update the image in the modal with the screenshot
+			var screenshotImg = document.querySelector('#cameraScreenshot' + cameraId);
+			screenshotImg.src = dataURL;
 		}
 	</script>
 	

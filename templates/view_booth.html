@@ -116,8 +116,7 @@
                                                         <thead>
                                                             <tr>
                                                                 <th>Booth Name</th>
-                                                                <th>Associated Camera</th>
-                                                                <th>Camera Status</th>
+                                                                <th>Location</th>
                                                                 <th>Action</th>
                                                             </tr>
                                                         </thead>
@@ -125,21 +124,16 @@
                                                             {% for booth in booths %}
                                                             <tr  id="delete_location{{booth.id}}" class="boothRow" data-location="{{ booth.location.id }}">
                                                                 <td><a style="color:#598CF7" href="{% url 'view_booth_cameras' booth.id %}">{{ booth.name }}</a></td>
-                                                                <td>
-                                                                    {% for camera in booth.camera_set.all %}
-                                                                        {{ camera.name }}{% if not forloop.last %}, {% endif %}
-                                                                    {% endfor %}
-                                                                </td>
-                                                                <td >
-                                                                    {% for camera in booth.camera_set.all %}
-                                                                        {{ camera.status }}{% if not forloop.last %}, {% endif %}
-                                                                    {% endfor %}
-                                                                </td>
+																<td>{{ booth.location }}</td>
+                                                               
                                                                 <td><button onclick="deleteLocation({{ booth.id }})" class="delete-location p-1 btn rounded" style="background-color: rgb(3 105 161);color:white;" data-ripple="">Delete</button></td>
                                                             </tr>
                                                             {% endfor %}
                                                         </tbody>
                                                     </table>
+													<div class="submit-btns" style="text-align: right;">
+														<button class="mtr-btn signin rounded"><span><a href="{% url 'dashboard' %}">Back</a></span></button>
+													</div>
                                                 </div>
                                             </div>
                                         </div>

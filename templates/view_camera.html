@@ -114,20 +114,20 @@
                                                             <tr id="delete_location{{camera.id}}">
                                                                 <td>{{ camera.name }}</td>
                                                                 <td>{{ camera.location }}</td>
-                                                                <td>{{ camera.booth }}</td>
+																<td><a style="color:#598CF7" href="{% url 'view_booth_cameras' camera.booth.id %}">{{ camera.booth.name }}</a></td>
                                                                 <td>{{ camera.status }}</td>
-																<td>{{ camera.ip_address }}</td>
+																<td><a href="{{ camera.ip_address }}" style="color: blue; text-decoration: underline;" target="_blank">{{ camera.ip_address }}</a></td>
+
                                                                 <td>
-																	<a href="{% url 'view_camera_feed'  %}" class="btn btn-primary">View Live Stream</a>
 																	<button onclick="deleteLocation({{camera.id}})" class="delete-location p-1 btn rounded" style="background-color: rgb(3 105 161);color:white;" data-ripple="">Delete</button></td>
                                                             </tr>
                                                             {% endfor %}
                                                         </tbody>
                                                     </table>
-													<video id="videoPlayer" controls autoplay>
-														<source src="{% url 'view_camera_feed' %}" type="multipart/x-mixed-replace">
-														Your browser does not support the video tag.
-													</video>
+													<div class="submit-btns" style="text-align: right;">
+														<button class="mtr-btn signin rounded"><span><a href="{% url 'dashboard' %}">Back</a></span></button>
+													</div>
+													
                                                 </div>
                                             </div>
                                         </div>

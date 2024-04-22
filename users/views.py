@@ -1,8 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from users.models import User
-from .utils import generate_random_password
-from django.core.mail import send_mail
+from .utils import generate_random_password,send_password_reset_email
 from users.forms.signup_form import UserSignupForm
 from users.forms.edit_profile_form import EditProfileForm
 from users.forms.change_password_form import ChangePasswordForm
@@ -13,9 +12,15 @@ from django.db import IntegrityError
 from users.utils import send_otp
 from datetime import datetime
 import pyotp
+import threading
+
+
 
 
 def custom_logout_view(request):
+    del request.session['is_logged']
+    del request.session["email"]
+    del request.session["username"]
     logout(request)
     return redirect('login') 
 
@@ -26,11 +31,15 @@ def custom_login_view(request):
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            request.session["username"]=username
-            send_otp(request)
+
+            request.session["username"] = username
+            request.session["email"] = user.email
+            request.session['is_logged'] = True
+            otp_thread = threading.Thread(target=send_otp, args=(request,))
+            otp_thread.start()
             return redirect("otpinput")
         else:
-            messages.error(request, 'Invalid Email or Password ')
+            messages.error(request, 'Invalid Email or Password')
             return render(request, 'login.html')
     else:
         return render(request, 'login.html')
@@ -44,19 +53,17 @@ def forget_password_view(request):
             new_password = generate_random_password()
             user.set_password(new_password) 
             user.save()
-            send_mail(
-                'Password Reset',
-                f'Your new password is: {new_password}',
-                'cvmaker750@gmail.com',
-                [email],
-                fail_silently=False,
-            )
+            email_thread = threading.Thread(target=send_password_reset_email, args=(email, new_password))
+            email_thread.start()
+
+            messages.success(request, 'Password reset instructions sent to your email.')
             return redirect('login') 
         except User.DoesNotExist:
             messages.error(request, 'Please Enter Your Registered Email')
             return render(request, 'forget_password.html')
     else:
-      return render(request, "forget_password.html")
+        return render(request, "forget_password.html")
+
     
 
 def user_signup_view(request):
@@ -203,12 +210,8 @@ def otp_input_view(request):
         return redirect("dashboard")
     if request.method=="POST":
         username = request.session["username"]
-        otp = request.POST.get('otp1', '') 
-        otp+=request.POST.get('otp2', '') 
-        otp+= request.POST.get('otp3', '') 
-        otp+= request.POST.get('otp4', '') 
-        otp+= request.POST.get('otp5', '') 
-        otp+= request.POST.get('otp6', '')
+        otp = request.POST.get('otp', '') 
+
         otp_secret_key = request.session["otp_secret_key"]
         otp_valid_date = request.session["otp_valid_date"]
         if otp_secret_key and otp_valid_date is not None:
@@ -225,9 +228,9 @@ def otp_input_view(request):
                     messages.error(request, "Invalid OTP entered")
             else:
                 messages.error(request, "The OTP has expired")
-                return redirect("login")
+                return redirect("otpinput")
         else:
             messages.error(request, "Something went wrong")
 
-            return redirect("login")
+            return redirect("otpinput")
     return render(request, "otp.html")

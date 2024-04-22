@@ -64,6 +64,11 @@
 							<h2 class="log-title">Register</h2>
 								<form action={% url 'signup' %} method="POST">
 									{% csrf_token %}
+									{% for error in form.non_field_errors %}
+                                            <div class="message error text-danger" role="alert">
+                                               <li>{{ error }}</li>
+                                            </div>
+                                        {% endfor %}
 									<div class="form-group">	
 										<input type="text" name="fullname" required="required"/>
 										<label class="control-label" for="input">First & Last Name</label><i class="mtrl-select"></i>
@@ -90,8 +95,8 @@
 										</label>
 									  </div>
 									<div class="submit-btns">
-											<button href="#" class="mtr-btn signin" onclick="window.history.back(); return false;"><span>Back</span></button>
-											<button href="accounts/signup/" type="submit" class="mtr-btn signin" ><span>Register</span></button>
+											<button  class="mtr-btn signin" ><span><a href="{% url 'login' %}">Back</a></span></button>
+											<button type="submit" class="mtr-btn signin" ><span>Register</span></button>
 									</div>
 							    </form>
 						</div>

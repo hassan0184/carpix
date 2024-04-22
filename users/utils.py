@@ -1,12 +1,14 @@
 import random
 import string
 import pyotp
+import threading
 from datetime import datetime, timedelta
 from django.core.mail import send_mail
 
 def generate_random_password(length=5):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
+
 
 
 def send_otp(request):
@@ -17,12 +19,13 @@ def send_otp(request):
     request.session["otp_valid_date"]=str(valid_date)
     print("your otp is", otp)
     send_mail(
-                'OYP',
+                'OTP',
                 f'Your OTP is: {otp}',
                 'cvmaker750@gmail.com',
-            ["raffaywaqar792@gmail.com"],
+            [request.session["email"]],
                 fail_silently=False,
             )
+
     
 def send_password_reset_email(email, new_password):
     send_mail(
