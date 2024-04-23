@@ -7,15 +7,24 @@ from django.contrib import messages
 
 
 def create_vehicle(request):
-    if request.method=="POST":
-        form=VehicleForm(request.POST)
-        if form.is_valid():
-            vehicle = form.save()
-            images = request.FILES.getlist("multiple_images")
-            for image in images:
-                VehicleImage.objects.create(vehicle=vehicle, image_file=image)
-                messages.success(request, "Vehilce added sucessfully")
-            return redirect("view-all-vehicles")
+    print("in add view", request.FILES)
+    vehicle = Vehicle.objects.create(plate_number="vehicledsdsd",contract_number="contract_ndsdsdsumber") 
+    for key, uploaded_files in request.FILES.lists():
+                # Create a VehicleImage instance for each uploaded image
+                for uploaded_file in uploaded_files:
+                    vehicle_image = VehicleImage(vehicle=vehicle)
+                    vehicle_image.image_file.save(uploaded_file.name, uploaded_file)
+                    vehicle_image.save()
+                messages.success(request, "Vehicle added successfully")
+    # if request.method=="POST":
+    #     form=VehicleForm(request.POST)
+    #     if form.is_valid():
+    #         vehicle = form.save()
+    #         images = request.FILES.getlist("multiple_images")
+    #         for image in images:
+    #             VehicleImage.objects.create(vehicle=vehicle, image_file=image)
+    #             messages.success(request, "Vehilce added sucessfully")
+    #         return redirect("view-all-vehicles")
             
     return render(request, "add_vehicle.html", {"form":VehicleForm})
 
