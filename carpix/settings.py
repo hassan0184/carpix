@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-wmdx(tu8w6hx9-u176(j)0=^p+s@waw2-2s87#q-nq&qk%+-nb
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-CORS_ALLOW_ALL_ORIGINS=True
+CORS_ALLOW_ALL_ORIGINS = True
 AUTH_USER_MODEL = 'users.User'
 
 # Application definition
@@ -48,21 +48,21 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
-AWS_ACCESS_KEY_ID = ''
-AWS_SECRET_ACCESS_KEY = ''
-AWS_STORAGE_BUCKET_NAME = ''
-AWS_S3_REGION_NAME = 'eu-north-1'
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-AWS_S3_URL_PROTOCOL = 'https:'
-MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}{AWS_S3_CUSTOM_DOMAIN}/media/'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# AWS_ACCESS_KEY_ID = ''
+# AWS_SECRET_ACCESS_KEY = ''
+# AWS_STORAGE_BUCKET_NAME = ''
+# AWS_S3_REGION_NAME = 'eu-north-1'
+# AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+# AWS_S3_URL_PROTOCOL = 'https:'
+# MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}{AWS_S3_CUSTOM_DOMAIN}/media/'
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
-     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -95,26 +95,26 @@ WSGI_APPLICATION = 'carpix.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'carpix',
-#         'USER': 'postgres',
-#         'PASSWORD': 'qwerty',
-#         'HOST': 'localhost',
-#         'PORT': '5435'
-#     }
-# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'carpix',
         'USER': 'postgres',
-        'PASSWORD': 'password',
+        'PASSWORD': 'qwerty',
         'HOST': 'localhost',
-        'PORT': '5432'
+        'PORT': '5435'
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'carpix',
+#         'USER': 'postgres',
+#         'PASSWORD': 'password',
+#         'HOST': 'localhost',
+#         'PORT': '5432'
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -154,8 +154,8 @@ STATICFILES_DIRS=[
     os.path.join(BASE_DIR,'static')
 ]
 STATIC_URL = '/static/'
-# MEDIA_ROOT=os.path.join(BASE_DIR,'media')
-# MEDIA_URL='/media/'
+MEDIA_ROOT=os.path.join(BASE_DIR,'media')
+MEDIA_URL='/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
