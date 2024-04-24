@@ -25,6 +25,8 @@ def custom_logout_view(request):
     return redirect('login') 
 
 def custom_login_view(request):
+    if request.user.is_authenticated:
+        return redirect("dashboard")
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('userpassword')
@@ -141,34 +143,44 @@ def change_password_view(request):
 
 @login_required
 def user_management_view(request):
-    if request.method == 'POST':
-        form = UserSignupForm(request.POST)    
-        if form.is_valid():
-            if request.POST.get("user_type").lower()=="simple_user":
-                user = User.objects.create_user(
-                fullname=form.cleaned_data.get("fullname"),
-                email=form.cleaned_data.get("email"),
-                username=form.cleaned_data.get("username"),
-                password=form.cleaned_data.get("password")
-            )
-            else:
-                user = User.objects.create_manager_user(
-                    fullname=form.cleaned_data.get("fullname"),
-                    email=form.cleaned_data.get("email"),
-                    username=form.cleaned_data.get("username"),
-                    password=form.cleaned_data.get("password")
-                )
+    if request.user.is_authenticated:
+        if request.user.is_staff:
+            if request.method == 'POST':
+                form = UserSignupForm(request.POST)    
+                if form.is_valid():
+                    if request.POST.get("user_type").lower()=="simple_user":
+                        user = User.objects.create_user(
+                        fullname=form.cleaned_data.get("fullname"),
+                        email=form.cleaned_data.get("email"),
+                        username=form.cleaned_data.get("username"),
+                        password=form.cleaned_data.get("password")
+                    )
+                    else:
+                        user = User.objects.create_manager_user(
+                            fullname=form.cleaned_data.get("fullname"),
+                            email=form.cleaned_data.get("email"),
+                            username=form.cleaned_data.get("username"),
+                            password=form.cleaned_data.get("password")
+                        )
 
-            Profile.objects.create(fullname=user.fullname,email=user.email, user=user)
-            messages.success(request, "User created successfully")
-            return render(request, "all_users.html", {"users":User.objects.all().exclude(role=1)})
-    else:
-        form = UserSignupForm()
-    return render(request, 'user_management.html', {'form': form})
+                    Profile.objects.create(fullname=user.fullname,email=user.email, user=user)
+                    messages.success(request, "User created successfully")
+                    return render(request, "all_users.html", {"users":User.objects.all().exclude(role=1)})
+            else:
+                form = UserSignupForm()
+            return render(request, 'user_management.html', {'form': form})
+        else:
+            return render(request, "permission_denied.html")
+    messages.error(request, "Please login first")
+    return redirect("accounts/login/?next=accounts/user-management/")
+
 
 
 def all_users_view(request):
-    return render(request, "all_users.html", {"users":User.objects.all().exclude(role=1)})
+    if request.user.is_authenticated:
+     return render(request, "all_users.html", {"users":User.objects.all().exclude(role=1)})
+    messages.error(request, "please login first")
+    return render(request,"login.html")
 
 def delete_user_view(request, pk):
     if request.method == 'DELETE':
@@ -179,6 +191,7 @@ def delete_user_view(request, pk):
             return render(request, 'all_users.html',{'users':users})
     return render(request, 'all_users.html',{'users':users})
 
+@login_required
 def edit_user_view(request, pk):
     if request.method == 'POST':
         user=User.objects.filter(id=pk).first()
@@ -194,15 +207,21 @@ def edit_user_view(request, pk):
     return render(request, 'all_users.html', {'users': users})
 
 def change_user_status_view(request, pk):
-    if request.method=="POST":
-        user=User.objects.filter(id=pk).first()
-        if request.POST.get("is_active")=="false":
-            user.is_active=False
+    if request.user.is_authenticated:
+        if request.user.is_staff:
+            if request.method=="POST":
+                user=User.objects.filter(id=pk).first()
+                if request.POST.get("is_active")=="false":
+                    user.is_active=False
+                else:
+                    user.is_active=True
+                user.save()
+                return redirect("allusers")
+            return render(request, 'all_users.html', {'users': User.objects.all().exclude(role=1).order_by("-id")})
         else:
-            user.is_active=True
-        user.save()
-        return redirect("allusers")
-    return render(request, 'all_users.html', {'users': User.objects.all().exclude(role=1).order_by("-id")})
+            return render(request, "permission_denied.html")
+    messages.error(request, "please login first")
+    return render(request,"login.html")
 
 
 def otp_input_view(request):

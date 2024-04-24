@@ -229,6 +229,7 @@
 						<li><a href="{% url 'logout' %}" title="">Logout</a></li>
 					</ul>
 				</li>
+				{% if request.user and request.user.is_authenticated and request.user.is_staff %}
 				<li>
 					<a href="#" title="">Location Managment</a>
 					<ul>
@@ -237,6 +238,7 @@
 
 					</ul>
 				</li>
+				{% endif %}
 				<li>
 					<a href="#" title="">Booth Managment</a>
 					<ul>
@@ -316,29 +318,31 @@
 									<div class="widget">
 										<h4 class="widget-title">Shortcuts</h4>
 										<ul class="naves">
+											{% if request.user and request.user.is_authenticated and request.user.is_staff %}
 											<li>
 												<i class="ti-clipboard"></i>
-												<a href="location/add-location/" title="">Add Location</a>
+												<a href="{% url 'add_location' %}" title="">Add Location</a>
 											</li>
 											<li>
 												<i class="ti-mouse-alt"></i>
-												<a href="location/view-location/" title="">View Location</a>
+												<a href="{% url 'view_location' %}" title="">View Location</a>
 											</li>
+											{% endif %}
 											<li>
 												<i class="ti-files"></i>
-												<a href="location/add-booth/" title="">Add Booth</a>
+												<a href="{% url 'add_booth' %}" title="">Add Booth</a>
 											</li>
 											<li>
 												<i class="ti-user"></i>
-												<a href="location/view-booth/" title="">View Booths</a>
+												<a href="{% url 'view_booth' %}" title="">View Booths</a>
 											</li>
 											<li>
 												<i class="ti-image"></i>
-												<a href="location/add-camera/" title="">Add Camera</a>
+												<a href="{% url 'add_camera' %}" title="">Add Camera</a>
 											</li>
 											<li>
 												<i class="ti-video-camera"></i>
-												<a  href="location/view-camera/" title="">View Cameras</a>
+												<a  href="{% url 'view_camera' %}" title="">View Cameras</a>
 											</li>
 						
 										</ul>
