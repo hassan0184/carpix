@@ -11,33 +11,48 @@ from django.shortcuts import render, get_object_or_404
 
 
 def add_location(request):
-    
-    if request.method == 'POST':
-        location_name = request.POST.get('location_name')
-        if location_name:
-            Location.objects.create(name=location_name)
-            messages.success(request, 'Location Added Sucessfully')
-            return redirect('add_location')
+    if request.user.is_authenticated:
+        if request.user.is_staff:
+            if request.method == 'POST':
+                location_name = request.POST.get('location_name')
+                if location_name:
+                    Location.objects.create(name=location_name)
+                    messages.success(request, 'Location Added Sucessfully')
+                    return redirect('add_location')
 
-    return render(request, 'add_location.html')
+            return render(request, 'add_location.html')
+        return render(request, "permission_denied.html")
+
+    messages.error(request, "Please login first")
+    return redirect("accounts/login/?next=/location/add-location/")
 
 def view_location(request):
-
-    locations=Location.objects.all().order_by('-id')
-    return render(request, 'view_location.html',{'locations':locations})
+    if request.user.is_authenticated:
+        if request.user.is_staff:
+            locations=Location.objects.all().order_by('-id')
+            return render(request, 'view_location.html',{'locations':locations})
+        return render(request, "permission_denied.html")
+    messages.error(request, "Please login first")
+    return redirect("accounts/login/?next=/location/view-location/")
 
 
 def delete_location(request,id):
-    
-    if request.method == 'DELETE':
-        locations=Location.objects.all().order_by('-id')
-        if id:
-            Location.objects.filter(id=id).delete()
-            messages.success(request, 'Location Deleted Sucessfully')
-            return render(request, 'view_location.html',{'locations':locations})
-    return render(request, 'view_location.html',{'locations':locations})
+    if request.user.is_authenticated:
+        if request.user.is_staff:
+            if request.method == 'DELETE':
+                locations=Location.objects.all().order_by('-id')
+                if id:
+                    Location.objects.filter(id=id).delete()
+                    messages.success(request, 'Location Deleted Sucessfully')
+                    return render(request, 'view_location.html',{'locations':locations})
+        else:
+            return render(request, "permission_denied.html")
+                
+        
+        return render(request, 'view_location.html',{'locations':locations})
 
-
+    messages.error(request, "Please login first")
+    return redirect("accounts/login/?next=/location/view-location/")
 
 def add_booth(request):
     
