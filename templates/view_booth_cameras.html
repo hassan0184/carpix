@@ -361,7 +361,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 
-	<script>
+	<!-- <script>
 		function captureScreenshot(cameraId) {
 			var video = document.getElementById("cameraFeed" + cameraId);
 			
@@ -386,14 +386,12 @@
 						var imageData = canvas.toDataURL("image/png");
 						screenshots.push(imageData);
 						if (screenshots.length === cameras.length) {
-                    // All screenshots captured, now upload
                     uploadScreenshots(screenshots);
                 }
 					}
 				});
 			});
 	
-			// Now you have an array 'screenshots' containing all the captured screenshots
 			console.log("All screenshots captured:", screenshots);
 		}
 
@@ -434,8 +432,113 @@
     };
     xhr.send(formData);
 }
-	</script>
-	
+
+</script> -->
+
+<script>
+    function captureScreenshot(cameraId) {
+        var video = document.getElementById("cameraFeed" + cameraId);
+        var canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        var imageData = canvas.toDataURL("image/png");
+        console.log("Screenshot captured for camera ID: " + cameraId);
+        uploadScreenshot(imageData);
+    }
+
+    function captureAllScreenshots() {
+        var cameras = document.querySelectorAll("[id^='cameraFeed']");
+        cameras.forEach(function(camera) {
+            var cameraId = camera.id.replace("cameraFeed", "");
+            captureScreenshot(cameraId);
+        });
+    }
+
+    function uploadScreenshot(imageData) {
+        var formData = new FormData();
+        formData.append('image', dataURLtoBlob(imageData));
+		console.log("form data", formData)
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://127.0.0.1:8000/vehicle/add/');
+        xhr.setRequestHeader('X-CSRFToken', getCookie("csrftoken"));
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                console.log('Image uploaded successfully');
+            } else {
+                console.error('Error uploading image:', xhr.statusText);
+            }
+        };
+        xhr.send(formData);
+    }
+
+    function dataURLtoBlob(dataURL) {
+    var parts = dataURL.split(',');
+    if (parts.length !== 2) {
+        console.error('Invalid data URL:', dataURL);
+        return null;
+    }
+
+    var contentType = parts[0].split(':')[1];
+    var raw = window.atob(parts[1]);
+    var rawLength = raw.length;
+    var uInt8Array = new Uint8Array(rawLength);
+
+    for (var i = 0; i < rawLength; ++i) {
+        uInt8Array[i] = raw.charCodeAt(i);
+    }
+
+    return new Blob([uInt8Array], { type: contentType });
+}
+</script>
+
+	 <!-- <script>
+		function captureScreenshot(cameraId) {
+  var video = document.getElementById("cameraFeed" + cameraId);
+
+  html2canvas(video, {
+    onrendered: function(canvas) {
+      var blob = new Blob([canvas.toDataURL("image/png").replace(/^data:image\/\w+;base64,/, "")], { type: "image/png" });
+      var filename = `camera_${cameraId}_${Date.now()}.png`;
+      uploadScreenshot(blob, filename);
+      console.log("Screenshot captured for camera ID: " + cameraId);
+    }
+  });
+}
+
+function captureAllScreenshots() {
+  var cameras = document.querySelectorAll("[id^='cameraFeed']");
+
+  cameras.forEach(function(camera) {
+    var cameraId = camera.id.replace("cameraFeed", "");
+    captureScreenshot(cameraId);
+  });
+
+  console.log("All screenshots captured");
+}
+
+function uploadScreenshot(blob, filename) {
+  var formData = new FormData();
+  formData.append('images', blob, filename);
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'http://127.0.0.1:8000/vehicle/add/', true); // Set async to true
+  xhr.setRequestHeader('X-CSRFToken', getCookie("csrftoken"));
+
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      console.log('Image uploaded successfully for camera:', cameraId);
+    } else {
+      console.error('Error uploading image:', xhr.statusText);
+    }
+  };
+
+  xhr.send(formData);
+}
+	 </script> -->
 	<script>
 		$(document).ready(function () {
 			$('#searchInput').on('keyup', function () {
