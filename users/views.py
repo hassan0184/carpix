@@ -109,7 +109,7 @@ def edit_profile_view(request):
             return render(request, 'edit_profile.html', {'profile_form': profile_form, "profile":request.user.profile, "errors":profile_form.non_field_errors})
     else:
         profile_form = EditProfileForm(instance=request.user.profile)
-    print("errors re", profile_form.errors)
+
     return render(request, 'edit_profile.html', {'profile_form': profile_form, "profile":request.user.profile, "errors":profile_form.non_field_errors})
 
 @login_required
@@ -172,7 +172,7 @@ def user_management_view(request):
         else:
             return render(request, "permission_denied.html")
     messages.error(request, "Please login first")
-    return redirect("accounts/login/?next=accounts/user-management/")
+    return redirect("login")
 
 
 

@@ -24,7 +24,7 @@ def add_location(request):
         return render(request, "permission_denied.html")
 
     messages.error(request, "Please login first")
-    return redirect("accounts/login/?next=/location/add-location/")
+    return render(request, "login.html")
 
 def view_location(request):
     if request.user.is_authenticated:
@@ -33,7 +33,7 @@ def view_location(request):
             return render(request, 'view_location.html',{'locations':locations})
         return render(request, "permission_denied.html")
     messages.error(request, "Please login first")
-    return redirect("accounts/login/?next=/location/view-location/")
+    return render(request, "login.html")
 
 
 def delete_location(request,id):
@@ -52,21 +52,25 @@ def delete_location(request,id):
         return render(request, 'view_location.html',{'locations':locations})
 
     messages.error(request, "Please login first")
-    return redirect("accounts/login/?next=/location/view-location/")
+    return render(request, "login.html")
 
 def add_booth(request):
+    if request.user.is_authenticated:
     
-    if request.method == 'POST':
-        booth_name = request.POST.get('booth_name')
-        booth_location_id = request.POST.get('booth_location')  
-        if booth_name and booth_location_id:
-            booth_location = Location.objects.get(pk=booth_location_id) 
-            Booth.objects.create(name=booth_name, location=booth_location)
-            messages.success(request, 'Booth Added Successfully')
-            return redirect('add_booth')
-    
-    locations=Location.objects.all().order_by('-id')
-    return render(request, 'add_booth.html',{"locations":locations})
+        if request.method == 'POST':
+            booth_name = request.POST.get('booth_name')
+            booth_location_id = request.POST.get('booth_location')  
+            if booth_name and booth_location_id:
+                booth_location = Location.objects.get(pk=booth_location_id) 
+                Booth.objects.create(name=booth_name, location=booth_location)
+                messages.success(request, 'Booth Added Successfully')
+                return redirect('add_booth')
+        
+        locations=Location.objects.all().order_by('-id')
+        return render(request, 'add_booth.html',{"locations":locations})
+    else:
+        messages.error(request,"please login first")
+        return render(request, "login.html")
 
 def view_booth(request):
 
