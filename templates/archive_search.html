@@ -1,0 +1,213 @@
+    {% load static %}
+    {% include 'base.html' %}
+    {% block content %}
+    <style>
+        .modal {
+        text-align: center;
+    }
+
+    .modal-dialog {
+        display: inline-block;
+        text-align: left;
+        vertical-align: middle;
+    }
+    .modal-content {
+        width: 100%; 
+        height: 100%;
+    }
+
+    </style>
+    <div class="container mt-5">
+        <h2>Archive Search</h2>
+        <form id="searchForm" action="{% url 'archive-search' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" name="license_plate_or_contract_number" required="required" />
+                <label class="control-label" for="input">License Plate or contract number</label><i class="mtrl-select"></i>
+
+            </div>
+            <div class="form-group">
+                <label for="dateRange">Select Date Range:</label>
+                <select class="form-control" id="dateRange" name="dateTime">
+                    <option>Last 24 hours</option>
+                    <option>Last 3 days</option>
+                    <option>Last 7 days</option>
+                    <option>Last 30 days</option>
+                    <option>Custom</option>
+                </select>
+            </div>
+            <div id="customDateRange" class="form-group d-none">
+                <label for="startDate">Custom Date Range:</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="startDate" name="startDate" placeholder="Start Date">
+                    <div class="input-group-prepend input-group-append">
+                        <span class="input-group-text">to</span>
+                    </div>
+                    <input type="text" class="form-control" id="endDate" name="endDate" placeholder="End Date">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        <hr>
+
+        <h2>Search Results</h2>
+        <div id="searchResults">
+            {% if search_results %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>License Plate</th>
+                            <th>Contract Number</th>
+                            <th>Date, Time</th>
+                            <th> Condition</th>
+                            <th>Camera Images</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in search_results %}
+                            <tr>
+                                <td>{{ result.plate_number }}</td>
+                                <td>{{ result.contract_number }}</td>
+                                <td>{{ result.date_time }}</td>
+                                <td>{{ result.reported_condition }}</td>
+                                {% for image in result.vehicle_images.all %}
+                                <td><img src="{{ image.image_file.url }}" class="img-thumbnail image-modal" 
+                                    alt="no image for this vehicle" 
+                                    data-src="{{ image.image_file.url }}" 
+                                    data-toggle="modal" 
+                                    data-target="#imageModal"></td>		
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+        {% if search_results %}
+        <button onclick="exportToPDF()" class="btn btn-primary">Export Data</button>
+        {% endif %}
+        
+    </div>
+    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img id="modalImage" src="" class="img-fluid">
+                   
+                    <a id="downloadImageIcon" href="#" download><i class="fas fa-download"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    // Check if the cookie name matches the expected format
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        // Extract and decode the CSRF token
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.0.272/jspdf.debug.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+
+<script>
+   $(document).ready(function() {
+    $('.image-modal').click(function() {
+        var imageSrc = $(this).data('src');
+        $('#modalImage').attr('src', imageSrc);
+        $('#downloadImageIcon').attr('href', imageSrc);
+    });
+});
+</script>
+    <script>
+    function exportToPDF() {
+        const pdf = new jsPDF(); 
+        let y = 15;
+        const table = document.getElementById('searchResults');
+        const headers = table.querySelectorAll('thead th');
+        headers.forEach((header, index) => {
+            pdf.setFontStyle("bold");
+            pdf.text(header.innerText, 10 + index * 50, y);
+        });
+
+        y += 10;
+
+        pdf.setLineWidth(0.1);
+        pdf.line(10, y, 10 + headers.length * 50, y);
+
+        const rows = table.querySelectorAll('tbody > tr');
+
+        rows.forEach(row => {
+            let x = 10; 
+
+    
+            row.querySelectorAll('td').forEach(cell => {
+                pdf.setFontStyle("normal");
+                pdf.text(cell.innerText, x, y);
+                x += 50; 
+            });
+            const images = row.querySelectorAll('.image-modal');
+            images.forEach((image, index) => {
+                const src = image.dataset.src;
+                if (src) {
+                    const img = new Image();
+                    img.src = src;
+                    img.onload = function() {
+                        pdf.addImage(img, 'PNG', x + index * 50, y - 5, 40, 40);
+                    };
+                }
+            });
+
+            y += 10;
+
+            pdf.setLineWidth(0.1);
+            pdf.line(10, y, 10 + headers.length * 50, y);
+        });
+
+        pdf.save('search_results.pdf');
+    }
+
+
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("#dateRange").change(function() {
+                if ($(this).val() === "Custom") {
+                    $("#customDateRange").removeClass("d-none");
+                } else {
+                    $("#customDateRange").addClass("d-none");
+                }
+            });
+
+            $("#startDate, #endDate").datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('.image-modal').click(function() {
+                var imageSrc = $(this).data('src');
+                $('#modalImage').attr('src', imageSrc);
+            });
+        });
+
+
+    </script>
+    {% endblock %}
