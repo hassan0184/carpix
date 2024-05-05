@@ -33,18 +33,18 @@ def custom_login_view(request):
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
-
             request.session["username"] = username
             request.session["email"] = user.email
             request.session['is_logged'] = True
-            otp_thread = threading.Thread(target=send_otp, args=(request,))
-            otp_thread.start()
+            # Call send_otp function in the main thread to ensure session variables are set
+            send_otp(request)
             return redirect("otpinput")
         else:
             messages.error(request, 'Invalid Username or Password')
             return render(request, 'login.html')
     else:
         return render(request, 'login.html')
+
 
 
 def forget_password_view(request):
@@ -269,7 +269,7 @@ def otp_input_view(request):
                 totp = pyotp.TOTP(otp_secret_key, interval=60)
                 if totp.verify(otp):
                     login(request, User.objects.get(username=username))
-                    del request.session["otp_secret_key"]
+                    del request.session["otp_secret_key"] 
                     del request.session["otp_valid_date"]
                     del request.session["username"]
                     return render(request, "dashboard.html") 
