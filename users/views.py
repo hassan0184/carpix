@@ -41,7 +41,7 @@ def custom_login_view(request):
             otp_thread.start()
             return redirect("otpinput")
         else:
-            messages.error(request, 'Invalid Email or Password')
+            messages.error(request, 'Invalid Username or Password')
             return render(request, 'login.html')
     else:
         return render(request, 'login.html')
@@ -69,21 +69,51 @@ def forget_password_view(request):
     
 
 def user_signup_view(request):
+
     if request.method == 'POST':
-        form = UserSignupForm(request.POST)
-        if form.is_valid():
-            user = User.objects.create_superuser(
-                fullname=form.cleaned_data.get("fullname"),
-                email=form.cleaned_data.get("email"),
-                username=form.cleaned_data.get("username"),
-                password=form.cleaned_data.get("password")
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        fullname = request.POST.get('fullname')
+
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'User with the same username already exists')
+            return redirect('signup') 
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'User with the same email already exists')
+            return redirect('signup') 
+
+        if len(password) < 8:
+            messages.error(request, 'Password must be at least 8 characters long')
+            return redirect('signup') 
+
+        has_uppercase = any(char.isupper() for char in password)
+        has_lowercase = any(char.islower() for char in password)
+        has_numeric = any(char.isdigit() for char in password)
+        
+        if not (has_uppercase and has_lowercase and has_numeric):
+            messages.error(request, 'Password must contain both uppercase and lowercase characters and at least one numeric digit')
+            return redirect('signup') 
+
+        if password != confirm_password:
+            messages.error(request, 'Password and confirm password must match')
+            return redirect('signup') 
+
+        user = User.objects.create_superuser(
+                fullname=fullname,
+                email=email,
+                username=username,
+                password=password
             )
-            Profile.objects.create(fullname=user.fullname,email=user.email, user=user)
-            messages.success(request, "User successfully created")
-            return redirect('login')
-    else:
-        form = UserSignupForm()
-    return render(request, 'signup.html', {'form': form})
+        Profile.objects.create(fullname=user.fullname,email=user.email, user=user)
+        messages.success(request, "User successfully created")
+        return redirect('signup')
+
+    return render(request, 'signup.html', {'form': None})
+
 
 
 

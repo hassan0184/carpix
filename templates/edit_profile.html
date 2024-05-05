@@ -82,18 +82,14 @@
 										<label class="control-label" for="input"><a href="https://wpkixx.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6c29010d05002c">[email&#160;protected]</a></label><i class="mtrl-select"></i>
 									  </div>
                     <div class="form-group">	
-                      <input type="text" name="phone" value="{{ profile.phone }}"  required="required"/>
+                      <input type="text" name="phone" value="{{ profile.phone|default:'-' }}"  required="required"/>
                       <label class="control-label" for="input">Contact</label><i class="mtrl-select"></i>
                       </div>
                       <div class="form-group">	
-                        <input type="text" name="address" value="{{ profile.address }}"  required="required"/>
+                        <input type="text" name="address" value="{{ profile.address|default:'-' }}"  required="required"/>
                         <label class="control-label" for="input">Address</label><i class="mtrl-select"></i>
                         </div>
-									  <div class="checkbox">
-										<label>
-										  <input type="checkbox" checked="checked"/><i class="check-box"></i>Accept Terms & Conditions ?
-										</label>
-									  </div>
+									  
 									<div class="submit-btns">
 											<button href="#" class="mtr-btn signin" onclick="window.history.back(); return false;"><span>Back</span></button>
 											<button href="accounts/signup/" type="submit" class="mtr-btn signin" ><span>Save Changes</span></button>

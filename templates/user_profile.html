@@ -1,7 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,279 +17,95 @@
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 </head>
 <body>
-  {% if messages %}
-  {% for i in messages %}
- <script>
-     Swal.fire({
-  icon: 'success',
-  title: 'Updated',
-  text: '{{i}}',
-  footer: '<a style="color:#598CF7" href=" {% url 'myprofile' %}">My Profile </a>'
-}) 
- </script> 
-  {% endfor %}
-{% endif %}
-<div class="theme-layout" style="background-color: rgb(3 105 161);">
-    <div >
 
-        <h3 class="text-5xl text-center py-3 text-white shadow-md">My Profile View</h3>
-    </div>
-
-
-	<section>
-		<div class="gap gray-bg">
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-lg-12">
-						<div class="row" id="page-contents">
-							<div class="col-lg-3">
-								<aside class="sidebar static">
-									
-									<div class="widget stick-widget">
-										<h4 class="widget-title">Edit info</h4>
-										<ul class="naves">
-											
-											
-											<li>
-												<i class="ti-lock"></i>
-												<a href="{% url 'change-password' %}"  title="">Change Password</a>
-											</li>
-											<li>
-												<i class="ti-lock"></i>
-												<a href="{% url 'editprofile' %}" title="">Edit Profile</a>
-											</li>
-											<li>
-												<i class="ti-lock"></i>
-												<a href="{% url 'dashboard' %}" title="">Main Menu</a>
-											</li>
-										</ul>
-									</div><!-- settings widget -->										
-								</aside>
-							</div><!-- sidebar -->
-                            <div class="col-lg-6">
-                                <div class="central-meta">
-                                    <div class="frnds">
-                  
-                                        <!-- Location dropdown -->
-                                        <div class="container" >
-                                            <div class="row justify-content-end">
-                                            </div>
-                                        </div>
-                                    
-                                        <!-- Tab panes -->
-                                        <div class="tab-content">
-                                            <div class="tab-pane active fade show" id="frends">
-                                                <div class="table-responsive">
-                                                    <table class="table" id="locationsTable">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Username</th>
-                                                                <th>Full Name</th>
-                                                                <th>Email</th>
-                                                                <th>Contact</th>
-                                                                <th>Address</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr  id="delete_location{{booth.id}}" class="boothRow" data-location="{{ booth.location.id }}">
-                                                                <td>{{ profile.user.username }}</td>
-                                                                <td>
-                                                                        {{ profile.user.fullname }}
-                                                                </td>
-                                                                <td >
-                                                                        {{profile.email}}
-                                                                </td>
-                                                                <td >
-                                                                  {{profile.phone}}
-                                                          </td>
-                                                          <td >
-                                                            {{profile.address}}
-                                                    </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
+<div class="theme-layout">
+	<div class="theme-layout">
+		<div class="container-fluid pdng0">
+			<div class="row merged">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					<div class="land-featurearea">
+						<div class="land-meta">
+							<h1 class="font-weight-bold">Carpix</h1>
+							<p class="font-weight-bold">
+								Simplifying Image Management with Security and Precision.<br>
+								Streamline Your Data, Enhance Your Vision.
+								Capture, Store, Retrieve – Effortlessly.
+							</p>
+							<div class="friend-logo">
+								<span>
+									<img src="{% static 'images/wink.png' %}" alt="Your Image Description">
+								</span>
+							</div>
 							
-									
+							
+							
+						</div>	
+					</div>
 				</div>
-			</div>
-		</div>	
-	</section>
-
-
-	<div class="bottombar">
-		<div class="container">
-			<div class="row">
 				
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					<div class="login-reg-bg">
+						<div class="log-reg-area sign">
+							<div class="messages">
+								{% for message in messages %}
+								<div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %}" role="alert">
+									{{ message }}
+								</div>
+								{% endfor %}
+                
+							</div>
+              {% for error in profile_form.non_field_errors %}
+              <div class="message error text-danger" role="alert">
+                <li>{{ error }}</li>
+             </div>
+         {% endfor %}
+              
+							<h2 class="log-title">My Profile</h2>
+								<form action={% url 'editprofile' %} method="POST">
+									{% csrf_token %}
+
+									<div class="form-group">	
+										<input type="text" name="fullname" value="{{ profile.fullname }}" required="required" />
+                    <label class="control-label" for="input">First & Last Name</label><i class="mtrl-select"></i>
+
+									  </div>
+									  <div class="form-group">	
+										<input type="text" name="username" value="{{ profile.user.username }}"  required="required"/>
+										<label class="control-label" for="input">User Name</label><i class="mtrl-select"></i>
+									  </div>
+									  <div class="form-group">	
+										<input type="email" name="email" value="{{ profile.email }}"  required="required"/>
+										<label class="control-label" for="input"><a href="https://wpkixx.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6c29010d05002c">[email&#160;protected]</a></label><i class="mtrl-select"></i>
+									  </div>
+                    <div class="form-group">	
+                      <input type="text" name="phone" value="{{ profile.user.get_role_display }}"  required="required"/>
+                      <label class="control-label" for="input">Role</label><i class="mtrl-select"></i>
+                      </div>
+                      <div class="form-group">	
+                        <input type="text" name="address" value="{{ profile.address|default:'-' }}"   />
+                        <label class="control-label" for="input">Address</label><i class="mtrl-select"></i>
+                        </div>
+									 
+									<div class="submit-btns">
+											<button href="#" class="mtr-btn signin" onclick="window.history.back(); return false;"><span>Back</span></button>
+									</div>
+							    </form>
+						</div>
+						
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
-	<div class="side-panel">
-			<h4 class="panel-title">General Setting</h4>
-			<form method="post">
-				<div class="setting-row">
-					<span>use night mode</span>
-					<input type="checkbox" id="nightmode1"/> 
-					<label for="nightmode1" data-on-label="ON" data-off-label="OFF"></label>
-				</div>
-				<div class="setting-row">
-					<span>Notifications</span>
-					<input type="checkbox" id="switch22" /> 
-					<label for="switch22" data-on-label="ON" data-off-label="OFF"></label>
-				</div>
-				<div class="setting-row">
-					<span>Notification sound</span>
-					<input type="checkbox" id="switch33" /> 
-					<label for="switch33" data-on-label="ON" data-off-label="OFF"></label>
-				</div>
-				<div class="setting-row">
-					<span>My profile</span>
-					<input type="checkbox" id="switch44" /> 
-					<label for="switch44" data-on-label="ON" data-off-label="OFF"></label>
-				</div>
-				<div class="setting-row">
-					<span>Show profile</span>
-					<input type="checkbox" id="switch55" /> 
-					<label for="switch55" data-on-label="ON" data-off-label="OFF"></label>
-				</div>
-			</form>
-			<h4 class="panel-title">Account Setting</h4>
-			<form method="post">
-				<div class="setting-row">
-					<span>Sub users</span>
-					<input type="checkbox" id="switch66" /> 
-					<label for="switch66" data-on-label="ON" data-off-label="OFF"></label>
-				</div>
-				<div class="setting-row">
-					<span>personal account</span>
-					<input type="checkbox" id="switch77" /> 
-					<label for="switch77" data-on-label="ON" data-off-label="OFF"></label>
-				</div>
-				<div class="setting-row">
-					<span>Business account</span>
-					<input type="checkbox" id="switch88" /> 
-					<label for="switch88" data-on-label="ON" data-off-label="OFF"></label>
-				</div>
-				<div class="setting-row">
-					<span>Show me online</span>
-					<input type="checkbox" id="switch99" /> 
-					<label for="switch99" data-on-label="ON" data-off-label="OFF"></label>
-				</div>
-				<div class="setting-row">
-					<span>Delete history</span>
-					<input type="checkbox" id="switch101" /> 
-					<label for="switch101" data-on-label="ON" data-off-label="OFF"></label>
-				</div>
-				<div class="setting-row">
-					<span>Expose author name</span>
-					<input type="checkbox" id="switch111" /> 
-					<label for="switch111" data-on-label="ON" data-off-label="OFF"></label>
-				</div>
-			</form>
-		</div><!-- side panel -->		
-	
-	<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="js/main.min.js"></script>
-	<script src="js/script.js"></script>
-	<script src="js/map-init.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8c55_YHLvDHGACkQscgbGLtLRdxBDCfI"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{% static 'js/main.min.js' %}"></script>
+<script src="{% static 'js/script.js' %}"></script>
 
-    <script>
-        document.getElementById('locationSelect').addEventListener('change', function() {
-            var selectedLocationId = this.value;
-            var boothRows = document.querySelectorAll('.boothRow');
-    
-            // Hide all booth rows
-            for (var i = 0; i < boothRows.length; i++) {
-                boothRows[i].style.display = 'none';
-            }
-    
-            // Show booth rows associated with the selected location
-            if (selectedLocationId !== '') {
-                var selectedBooths = document.querySelectorAll('.boothRow[data-location="' + selectedLocationId + '"]');
-                for (var i = 0; i < selectedBooths.length; i++) {
-                    selectedBooths[i].style.display = 'table-row';
-                }
-            }
-        });
-    </script>
-    <script>
-    $(document).ready(function () {
-        $('#searchInput').on('keyup', function () {
-            var searchText = $(this).val().toLowerCase();
-            $('#locationsTable tbody tr').each(function () {
-                var rowText = $(this).text().toLowerCase();
-                $(this).toggle(rowText.indexOf(searchText) > -1);
-            });
-        });
-    });
-
-    function deleteLocation(id) {
-        var url = "/location/delete-booth/" + id;
-        
-        // Get CSRF token
-        var csrftoken = getCookie('csrftoken');
-		$("#delete_location" + id).remove();
-        
-        // Include CSRF token in AJAX request
-        $.ajax({
-            url: url,
-            type: "DELETE",
-            dataType: "json",
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            },
-            success: function (data) {
-                console.log("deleted",data)
-                // Remove the deleted location's row from the table
-                $("#delete_location" + id).remove();
-            },
-            error: function (xhr, status, error) {
-                console.error("Error:", error);
-            }
-        });
-    }
-    
-    
-    // Function to get CSRF token from cookie
-    function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = cookies[i].trim();
-                // Check if the cookie name matches the expected format
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    // Extract and decode the CSRF token
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-</script>
-   
 </body>	
-
 </html>

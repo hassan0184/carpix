@@ -13,5 +13,4 @@ def Dashboard_View(request):
         users=User.objects.all()
         cameras=Camera.objects.all()
         return render(request, 'dashboard.html', {'locations': locations,'booths': booths, vehicles:vehicles, "users":users,"cameras":cameras})
-    messages.error(request,"Please login first")
     return render(request, "login.html")

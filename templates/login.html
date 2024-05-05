@@ -21,18 +21,7 @@
 
 </head>
 <body>
-    {% if messages %}
-    {% for i in messages %}
-   <script>
-       Swal.fire({
-    icon: 'success',
-    title: 'Updated',
-    text: '{{i}}',
-    footer: '<a style="color:#598CF7" href=" {% url 'login' %}">Login </a>'
-  }) 
-   </script> 
-    {% endfor %}
-  {% endif %}
+
 <div class="theme-layout">
 	<div class="theme-layout">
 		<div class="container-fluid pdng0">

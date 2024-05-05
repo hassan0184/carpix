@@ -27,7 +27,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.min.js"></script>
 
-
+	<script src="js/html2canvas.js"></script>
 </head>
 
 <body>
@@ -104,6 +104,7 @@
 										
 
 										<div class="submit-btns">
+											<button type="button" class="mtr-btn signin" onclick="captureScreenshot()"><span>Capture Images</span></button>
 											<button type="submit" class="mtr-btn signin"><span>Submit</span></button>
 										</div>
 										
@@ -121,18 +122,17 @@
 									{% for camera in cameras %}
 									<div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 m-3">
 										<div class="card mb-3" style="width: 120%; height: 100%;">
-											<img src="{{ camera.ip_address }}" style="width: 100%; height: 80%;" class="card-img-top" id="cameraFeed{{ camera.id }}"></img>
+											
+											<img src="{{ camera.ip_address }}" style="width: 100%; height: 80%;" class="card-img-top" id="camera_view{{ camera.id }}"></img>
 											<div class="card-body">
-												<h5 class="card-title">Camera Name: {{ camera.name }}</h5>
-												<button type="button" class="btn btn-primary select-camera-btn" data-toggle="modal" data-target="#cameraModal{{ camera.id }}" onclick="captureScreenshot('{{ camera.id }}')">Capture Screenshot</button>
+												<h5 class="card-title">Camera Name:<b> {{ camera.name }}</b></h5>
+												<button type="button"  class="mtr-btn signin capture-camera-btn" data-toggle="modal" data-target="#cameraModal{{ camera.id }}" ><b style="color:white;">Select</b></button>
 											</div>
 										</div>
 									</div>
 									{% endfor %}
 								</div>
-								<div class="submit-btns">
-									<button id="captureImagesBtn" class="mtr-btn signin capture-camera-btn" onclick="captureAllScreenshots()"><span>Capture images</span></button>
-								</div>
+
 							</div>
 						</div>
 						
@@ -172,7 +172,7 @@
 						<textarea class="form-control" id="notes{{ camera.id }}" rows="3"></textarea>
 					</div>
 					<div class="screenshot-container">
-						<img src="" alt="Camera Screenshot" class="img-fluid" id="cameraScreenshot{{ camera.id }}">
+						<img src="" alt="Camera Screenshot" class="img-fluid" id="cameraFeed{{ camera.id }}">
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -361,184 +361,23 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 
-	<!-- <script>
-		function captureScreenshot(cameraId) {
-			var video = document.getElementById("cameraFeed" + cameraId);
+	<script>
+		function captureScreenshot() {
+			console.log("hello world")
+
+			var video = document.getElementById("camera_view" + cameraId);
+			html2canvas(element,{allowTaint:true}).then(function(canvas) {
+				document.body.appendChild(canvas);
+			});
 			
-			html2canvas(video, {
-				onrendered: function(canvas) {
-					var imageData = canvas.toDataURL("image/png");
-					// You can store imageData in a JavaScript array or perform further processing here
-					console.log("Screenshot captured for camera ID: " + cameraId);
-				}
-			});
+			
+			
 		}
+	</script>
 	
-		function captureAllScreenshots() {
-			var cameras = document.querySelectorAll("[id^='cameraFeed']");
-			var screenshots = [];
-	
-			cameras.forEach(function(camera) {
-				var cameraId = camera.id.replace("cameraFeed", "");
-	
-				html2canvas(camera, {
-					onrendered: function(canvas) {
-						var imageData = canvas.toDataURL("image/png");
-						screenshots.push(imageData);
-						if (screenshots.length === cameras.length) {
-                    uploadScreenshots(screenshots);
-                }
-					}
-				});
-			});
-	
-			console.log("All screenshots captured:", screenshots);
-		}
-
-		function dataURLtoBlob(dataURL) {
-    var parts = dataURL.split(';base64,');
-    var contentType = parts[0].split(':')[1];
-    var raw = window.atob(parts[1]);
-    var rawLength = raw.length;
-    var uInt8Array = new Uint8Array(rawLength);
-
-    for (var i = 0; i < rawLength; ++i) {
-        uInt8Array[i] = raw.charCodeAt(i);
-    }
-
-    return new Blob([uInt8Array], { type: contentType });
-}
+		
 
 
-	function uploadScreenshots(screenshots) {
-		console.log("in upload", screenshots)
-    var formData = new FormData();
-    screenshots.forEach(function(imageData, index) {
-        formData.append('image_' + index, dataURLtoBlob(imageData));
-    });
-	console.log("form data", formData)
-
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'http://127.0.0.1:8000/vehicle/add/',);
-	xhr.setRequestHeader('X-CSRFToken', getCookie("csrftoken"));
-	
-	
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            console.log('Images uploaded successfully');
-        } else {
-            console.error('Error uploading images:', xhr.statusText);
-        }
-    };
-    xhr.send(formData);
-}
-
-</script> -->
-
-<script>
-    function captureScreenshot(cameraId) {
-        var video = document.getElementById("cameraFeed" + cameraId);
-        var canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        var ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        var imageData = canvas.toDataURL("image/png");
-        console.log("Screenshot captured for camera ID: " + cameraId);
-        uploadScreenshot(imageData);
-    }
-
-    function captureAllScreenshots() {
-        var cameras = document.querySelectorAll("[id^='cameraFeed']");
-        cameras.forEach(function(camera) {
-            var cameraId = camera.id.replace("cameraFeed", "");
-            captureScreenshot(cameraId);
-        });
-    }
-
-    function uploadScreenshot(imageData) {
-        var formData = new FormData();
-        formData.append('image', dataURLtoBlob(imageData));
-		console.log("form data", formData)
-
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://127.0.0.1:8000/vehicle/add/');
-        xhr.setRequestHeader('X-CSRFToken', getCookie("csrftoken"));
-
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                console.log('Image uploaded successfully');
-            } else {
-                console.error('Error uploading image:', xhr.statusText);
-            }
-        };
-        xhr.send(formData);
-    }
-
-    function dataURLtoBlob(dataURL) {
-    var parts = dataURL.split(',');
-    if (parts.length !== 2) {
-        console.error('Invalid data URL:', dataURL);
-        return null;
-    }
-
-    var contentType = parts[0].split(':')[1];
-    var raw = window.atob(parts[1]);
-    var rawLength = raw.length;
-    var uInt8Array = new Uint8Array(rawLength);
-
-    for (var i = 0; i < rawLength; ++i) {
-        uInt8Array[i] = raw.charCodeAt(i);
-    }
-
-    return new Blob([uInt8Array], { type: contentType });
-}
-</script>
-
-	 <!-- <script>
-		function captureScreenshot(cameraId) {
-  var video = document.getElementById("cameraFeed" + cameraId);
-
-  html2canvas(video, {
-    onrendered: function(canvas) {
-      var blob = new Blob([canvas.toDataURL("image/png").replace(/^data:image\/\w+;base64,/, "")], { type: "image/png" });
-      var filename = `camera_${cameraId}_${Date.now()}.png`;
-      uploadScreenshot(blob, filename);
-      console.log("Screenshot captured for camera ID: " + cameraId);
-    }
-  });
-}
-
-function captureAllScreenshots() {
-  var cameras = document.querySelectorAll("[id^='cameraFeed']");
-
-  cameras.forEach(function(camera) {
-    var cameraId = camera.id.replace("cameraFeed", "");
-    captureScreenshot(cameraId);
-  });
-
-  console.log("All screenshots captured");
-}
-
-function uploadScreenshot(blob, filename) {
-  var formData = new FormData();
-  formData.append('images', blob, filename);
-
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'http://127.0.0.1:8000/vehicle/add/', true); // Set async to true
-  xhr.setRequestHeader('X-CSRFToken', getCookie("csrftoken"));
-
-  xhr.onload = function() {
-    if (xhr.status === 200) {
-      console.log('Image uploaded successfully for camera:', cameraId);
-    } else {
-      console.error('Error uploading image:', xhr.statusText);
-    }
-  };
-
-  xhr.send(formData);
-}
-	 </script> -->
 	<script>
 		$(document).ready(function () {
 			$('#searchInput').on('keyup', function () {
