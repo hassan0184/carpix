@@ -46,18 +46,13 @@ Last change:  4/september/18
 
 @import url('https://fonts.googleapis.com/css?family=Muli:300,400,400i,500,700,800');
 @import url('https://fonts.googleapis.com/css?family=Satisfy');
-@font-face {
-    font-family: HoboStd;
-    src: url('../fonts/HoboStd.ttf'), url('../fonts/HoboStd.eot');
-}
+
 
 
 /*===============
 ***General Styling 
 ===============*/
-html,body{
-	font-family: "Muli", "Segoe Ui";
-}
+
 body {
     float: left;
     width: 100%;
@@ -388,7 +383,7 @@ ul.owl-carousel {
     color: #fff;
     content: "\f0d9";
     display: inline-block;
-    font-family: fontawesome;
+
     font-size: 18px;
     left: 20px;
     line-height: 30px;
@@ -512,9 +507,6 @@ header.sticky {
     width: 100%;
 }
 
-.land-meta > h1 {
-    font-family: hobo std;
-}
 
 .land-meta > p {
     color: #fff;
@@ -532,7 +524,7 @@ header.sticky {
 }
 
 .friend-logo > span {
-    font-family: hobo std;
+
     font-size: 200px;
     position: relative;
 }
@@ -2223,7 +2215,6 @@ footer .logo {
 
 .logo > h4 {
     display: inline-block;
-    font-family: HoboStd;
     margin-bottom: 0;
     vertical-align: middle;
     width: 80%;
@@ -2387,7 +2378,6 @@ footer .logo {
 .toggle-setting > span {
     color: #4f4f4f;
     float: left;
-    font-family: Muli;
     font-size: 13px;
     letter-spacing: 0.3px;
 }
@@ -2409,7 +2399,6 @@ footer .logo {
     background-image: none;
     cursor: pointer;
     display: inline-block;
-    font-family: inherit;
     font-size: 1em;
     height: 20px;
     line-height: 1;
@@ -2424,7 +2413,6 @@ footer .logo {
     color: #b7b7b7;
     content: attr(data-off-label);
     display: block;
-    font-family: inherit;
     font-size: 0.7rem;
     font-weight: 500;
     line-height: 13px;
@@ -3032,7 +3020,6 @@ li.google {
 
 .bg-cntct {
     bottom: 80px;
-    font-family: hobostd;
     font-size: 90px;
     opacity: 0.1;
     position: absolute;
@@ -3266,7 +3253,6 @@ nav.breadcrumb {
 .accordion .card h5 button::before {
     content: "";
     float: right;
-    font-family: fontawesome;
 }
 
 .accordion .card h5 button[aria-expanded="true"]::before {
@@ -4540,7 +4526,6 @@ canvas {
 .btn-view.btn-load-more::before {
     color: #333;
     content: "\f01e";
-    font-family: fontawesome;
     left: 50%;
     opacity: 1;
     position: absolute;
@@ -4625,7 +4610,6 @@ canvas {
 
 .mh-text > a {
     display: inline-block;
-    font-family: hobostd;
     font-size: 20px;
     vertical-align: middle;
 }
@@ -4724,7 +4708,6 @@ canvas {
 
 .top-area > ul.main-menu > li::after {
     content: "";
-    font-family: fontawesome;
     font-size: 13px;
     position: absolute;
     right: 10px;
@@ -6004,7 +5987,6 @@ form.filter-form input {
 .baner-inf > span {
     color: #fff;
     display: inline-block;
-    font-family: satisfy;
     font-size: 60px;
     margin-right: 60px;
     vertical-align: middle;
@@ -8414,7 +8396,6 @@ figure.sign-author {
     -o-border-radius: 50%;
     border-radius: 50%;
     display: inline-block;
-    font-family: inherit;
     height: 51px;
     line-height: 51px;
     width: 51px;
@@ -8565,7 +8546,6 @@ a.shopping-cart > i {
 .slick-arrow::before {
     color: #a8aaab;
     content: "\f107";
-    font-family: fontawesome;
     font-size: 20px;
     left: 50%;
     position: absolute;
