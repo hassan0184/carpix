@@ -7,7 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="" />
 	<meta name="keywords" content="" />
-	<title>Carpix Portal</title>
+	<title>View-Booth </title>
 	<link rel="icon" href="{% static 'images/fav.png' %}" type="image/png" sizes="16x16">
 
 	<link rel="stylesheet" href="{% static 'css/main.min.css' %}">
@@ -27,7 +27,8 @@
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.min.js"></script>
 
-	<script src="js/html2canvas.js"></script>
+	<script src="{% static 'js/html2canvas.js' %}"></script>
+
 </head>
 
 <body>
@@ -104,7 +105,6 @@
 										
 
 										<div class="submit-btns">
-											<button type="button" class="mtr-btn signin" onclick="captureScreenshot()"><span>Capture Images</span></button>
 											<button type="submit" class="mtr-btn signin"><span>Submit</span></button>
 										</div>
 										
@@ -126,10 +126,11 @@
 											<img src="{{ camera.ip_address }}" style="width: 100%; height: 80%;" class="card-img-top" id="camera_view{{ camera.id }}"></img>
 											<div class="card-body">
 												<h5 class="card-title">Camera Name:<b> {{ camera.name }}</b></h5>
-												<button type="button"  class="mtr-btn signin capture-camera-btn" data-toggle="modal" data-target="#cameraModal{{ camera.id }}" ><b style="color:white;">Select</b></button>
+												<button type="button"  class="mtr-btn signin capture-camera-btn" data-toggle="modal"  data-target="#cameraModal{{ camera.id }}" onclick="captureScreenshot({{ camera.id }})" ><b style="color:white;">Select</b></button>
 											</div>
 										</div>
 									</div>
+
 									{% endfor %}
 								</div>
 
@@ -153,7 +154,7 @@
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="cameraModalLabel{{ camera.id }}">Select Camera View</h5>
+					<h5 class="modal-title" id="cameraModalLabel{{ camera.id }}">You are Watching {{camera.name}}</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -164,7 +165,6 @@
 						<select class="form-control" id="condition{{ camera.id }}">
 							<option value="option1">Option 1</option>
 							<option value="option2">Option 2</option>
-							<!-- Add more options as needed -->
 						</select>
 					</div>
 					<div class="form-group">
@@ -351,7 +351,7 @@
 				<label for="switch111" data-on-label="ON" data-off-label="OFF"></label>
 			</div>
 		</form>
-	</div><!-- side panel -->
+	</div>
 
 	<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 	<script src="js/main.min.js"></script>
@@ -359,18 +359,15 @@
 	<script src="js/map-init.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8c55_YHLvDHGACkQscgbGLtLRdxBDCfI"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 
 	<script>
-		function captureScreenshot() {
-			console.log("hello world")
-
-			var video = document.getElementById("camera_view" + cameraId);
-			html2canvas(element,{allowTaint:true}).then(function(canvas) {
-				document.body.appendChild(canvas);
-			});
-			
-			
+		function captureScreenshot(cameraId) {
+				var video = document.getElementById("camera_view" + cameraId);
+				var target_img = document.getElementById("cameraFeed" + cameraId);
+				html2canvas(video, { allowTaint: true }).then(function (canvas) {
+					console.log("canvas.toDataURL()",canvas.toDataURL())
+					document.body.appendChild(target_img);
+				});
 			
 		}
 	</script>
