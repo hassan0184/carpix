@@ -133,6 +133,8 @@
 
 									{% endfor %}
 								</div>
+								<button type="button" class="btn btn-primary" id="captureAllScreenshotsBtn">Capture All Screenshots</button>
+
 
 							</div>
 						</div>
@@ -362,13 +364,16 @@
 
 	<script>
 		function captureScreenshot(cameraId) {
+			console.log("in it")
 				var video = document.getElementById("camera_view" + cameraId);
 				var target_img = document.getElementById("cameraFeed" + cameraId);
 				html2canvas(video, { allowTaint: true }).then(function (canvas) {
-					console.log("canvas.toDataURL()",canvas.toDataURL())
+					// console.log("canvas.toDataURL()",canvas.toDataURL())
 					document.body.appendChild(target_img);
+					console.log("target images", target_img)
+					// console.log("documnet body", appendChild)
 				});
-			
+			console.log("documnet body", document.body)
 		}
 	</script>
 	
@@ -431,6 +436,31 @@
 			return cookieValue;
 		}
 	</script>
+<script>
+    function captureScreenshot(cameraCard) {
+        return html2canvas(cameraCard).then(function(canvas) {
+            return canvas.toDataURL('image/png');
+        });
+    }
+
+    function captureAllScreenshots() {
+        var screenshots = [];
+        var cameraCards = document.querySelectorAll('.card.mb-3');
+        
+        cameraCards.forEach(function(cameraCard) {
+            captureScreenshot(cameraCard).then(function(screenshot) {
+                screenshots.push(screenshot);
+                if (screenshots.length === cameraCards.length) {
+                    console.log(screenshots);
+                }
+            });
+        });
+    }
+
+    document.getElementById("captureAllScreenshotsBtn").addEventListener("click", function() {
+        captureAllScreenshots();
+    });
+</script>
 
 </body>
 
